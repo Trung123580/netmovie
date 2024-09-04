@@ -14,7 +14,7 @@ const Banner = ({ data }: { data: any }) => {
   const [isLoading, setIsLoading] = useState(false)
   return (
     <Suspense fallback={<Loading></Loading>}>
-      <div className='relative lg:top-0 w-full banner min-h-screen'>
+      <div className='relative lg:top-0 w-full banner min-h-screen' id='banner'>
         <Swiper
           autoplay={{
             delay: 7000,

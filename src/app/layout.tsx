@@ -6,6 +6,8 @@ import ProviderRedux from "@/components/ProviderRedux"
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
+import "react-toastify/dist/ReactToastify.css"
+import ContextProvider from "@/context/ContextProvider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -22,7 +24,9 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <ProviderRedux>
-          <GlobalsLayout>{children}</GlobalsLayout>
+          <ContextProvider>
+            <GlobalsLayout>{children}</GlobalsLayout>
+          </ContextProvider>
         </ProviderRedux>
       </body>
     </html>

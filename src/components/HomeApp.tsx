@@ -11,9 +11,10 @@ import TitlePath from "@/components/TitlePath"
 import CardProduct from "@/components/CardProduct"
 import Loading from "./Loading"
 import useResize from "./hook/useResize"
+import { storeState } from "@/store/storeApi"
 const HomeApp = () => {
   const dispatch = useDispatch()
-  const { data }: any = useSelector((state: RootState) => state.storeApp)
+  const { data }: storeState = useSelector((state: RootState) => state.storeApp)
   const { device } = useResize()
 
   // console.log(Object.keys(data?.banner?.items[0]));
@@ -69,9 +70,9 @@ const HomeApp = () => {
   }, [])
   useEffect(() => {
     if (data?.category.length) {
+      if (window) window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }, [data?.category])
-  console.log(data)
   if (!data) return <Loading />
   return (
     <>

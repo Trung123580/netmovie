@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Varela+Round&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Varela+Round&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-$font-VarelaRound: 'Varela Round', sans-serif;
-$font-NunitoSan: 'Nunito Sans', sans-serif;
+$font-VarelaRound: "Varela Round", sans-serif;
+$font-NunitoSan: "Nunito Sans", sans-serif;
 $color-black: #000000f2;
 $color-white: #fff;
 $color-yellow: rgb(228, 216, 4);
@@ -87,14 +87,14 @@ a {
   }
 }
 .wrapper-banner {
-  @include mobile-table {
-    background: transparent !important ;
-    height: auto !important;
-  }
-  @include mobile {
-    background: transparent !important ;
-    height: auto !important;
-  }
+  // @include mobile-table {
+  //   background: transparent !important ;
+  //   height: auto !important;
+  // }
+  // @include mobile {
+  //   background: transparent !important ;
+  //   height: auto !important;
+  // }
 }
 .movie-details {
   &::-webkit-scrollbar {
@@ -105,7 +105,7 @@ a {
   .swiper-button-next,
   .swiper-button-prev {
     &::after {
-      content: '';
+      content: "";
       width: 27px;
       height: 27px;
       border: 3.5px solid transparent;
@@ -171,7 +171,7 @@ a {
     overflow: hidden;
     position: relative;
     &::after {
-      content: 'vip';
+      content: "vip";
       position: absolute;
       top: 0;
       right: 0;
@@ -184,17 +184,17 @@ a {
     }
   }
 }
-.css-1v2lvtn-MuiPaginationItem-root{
+.css-1v2lvtn-MuiPaginationItem-root {
   color: white !important;
-  @media screen and (min-width:769px) {
+  @media screen and (min-width: 769px) {
     font-size: 1.5rem !important;
   }
 }
 .css-r93niq-MuiButtonBase-root-MuiPaginationItem-root {
   color: white !important;
   border-color: white !important;
-  &:hover{
-    opacity: .8 !important;
+  &:hover {
+    opacity: 0.8 !important;
     border-color: $color-yellow !important;
     color: $color-yellow !important;
   }
@@ -202,7 +202,7 @@ a {
     border-color: $color-yellow !important;
     color: $color-yellow !important;
   }
-  @media screen and (min-width:769px) {
+  @media screen and (min-width: 769px) {
     height: 2.5rem !important;
     width: 2.5rem !important;
   }

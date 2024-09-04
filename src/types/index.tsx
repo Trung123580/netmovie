@@ -77,3 +77,13 @@ type popup = {
 // type PayItem = { type: string; deadline: number };
 type CategoryItem = { id: string; name: string; path: string }
 type menuCategory = CategoryItem[]
+type popupType = { popup: string; isShow: boolean; srcTrailer?: string; infoPay?: any; dataPopupYesNo?: any }
+type AuthContextType = {
+  states: {
+    showPopup: popupType
+  }
+  handle: {
+    onShowPopup: (popup?: string, srcTrailer?: string, infoPay?: any, dataPopupYesNo?: any) => void
+    onShowToast: (message: string, type: string) => void
+  }
+}

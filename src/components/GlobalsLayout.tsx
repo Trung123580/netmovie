@@ -6,20 +6,23 @@ import Header from "@/layout/Header"
 import { RootState } from "@/store/store"
 import Link from "next/link"
 // import Loading from '@/components/Loading';
-// import { useApp } from '@/context/ContextProvider';
+import { useApp } from "@/context/ContextProvider"
 import React, { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
-// import { FaGooglePlusSquare, FaSquareXTwitter, IoClose, IoIosSearch, IoMicOutline, MdOutlineRecordVoiceOver } from '@/utils/icons';
-// import { FacebookShareButton, TwitterShareButton, XIcon, FacebookIcon, TelegramShareButton, TelegramIcon } from 'react-share';
-// import { ToastContainer } from 'react-toastify';
-// import Button from '@/components/Button';
-// import { comboList, popup, typeToast } from '@/utils/constants';
-// import Image from 'next/image';
+import { FaGooglePlusSquare, FaSquareXTwitter, IoClose, IoIosSearch, IoMicOutline, MdOutlineRecordVoiceOver } from "@/utils/icons"
+import { FacebookShareButton, TwitterShareButton, XIcon, FacebookIcon, TelegramShareButton, TelegramIcon } from "react-share"
+import { ToastContainer } from "react-toastify"
+import Button from "@/components/Button"
+import { popup, typeToast } from "@/utils/constants"
+import Image from "next/image"
 // import { extractNumber, formatCurrency } from '@/utils/helpers';
 // import { useRouter } from 'next/navigation';
 const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   //   const router = useRouter();
-  //   const { handle, user, isLoading, showPopup }: any = useApp();
+  const {
+    states: { showPopup },
+    handle: { onShowPopup, onShowToast },
+  }: AuthContextType = useApp()
   //   const { onLoginGG, onLoginTW, onShowToast, onPayMoMo, onShowPopup, onRemovePackage } = handle;
   const [hydrated, setHydrated] = useState(false)
   const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
@@ -62,14 +65,14 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
   //     recognitionRef.current.onend = () => setIsActiveVoice(false);
   //     recognitionRef.current.start();
   //   };
-  //   const handleUrlShare = () => {
-  //     if (typeof window !== 'undefined') {
-  //       return window.location.href;
-  //     } else {
-  //       return '';
-  //     }
-  //   };
-  //   const url = handleUrlShare();
+  const handleUrlShare = () => {
+    if (typeof window !== "undefined") {
+      return window.location.href
+    } else {
+      return ""
+    }
+  }
+  const url = handleUrlShare()
   useEffect(() => {
     setHydrated(true)
   }, [])
@@ -111,7 +114,7 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
       <Header />
       {children}
       <Footer />
-      {/* <ToastContainer
+      <ToastContainer
         position='top-right'
         autoClose={3000}
         hideProgressBar={false}
@@ -123,18 +126,15 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
         draggable
         pauseOnHover
         theme='dark'
-      /> */}
-      {/* {showPopup.isShow && (
-        <div className='bg-black/95 fixed top-0 left-0 w-full h-screen z-50 p-4'>
+      />
+      {showPopup.isShow && (
+        <div className='bg-black/50 fixed top-0 left-0 w-full h-screen z-50 p-4'>
           <div className='flex justify-end cursor-pointer'>
             <Button icon={<IoClose fontSize={35} />} onClick={() => onShowPopup()} />
           </div>
-          {showPopup.popup === popup.sharePopup && (
-            <div className='relative flex-center h-full '>
-              <div className={`-z-10 absolute  w-full h-full scale-[1] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-12`}>
-                <Image src='/images/logo.jpg' className='w-full h-full object-contain  opacity-50' height={1000} width={1000} alt='logo' />
-              </div>
-              <div className='bg-[#18181b] rounded-lg p-6 w-[90vw] max-w-max min-w-[40vw] '>
+          <div className='relative flex-center h-full' onClick={() => onShowPopup()}>
+            {showPopup.popup === popup.sharePopup && (
+              <div className='bg-[#18181b] rounded-lg p-6 w-[90vw] max-w-max min-w-[40vw]' onClick={(e) => e.stopPropagation()}>
                 <h3 className='text-center text-2xl font-bold sm:text-3xl'>Chia sẻ</h3>
                 <div className='flex gap-x-4 py-4'>
                   <FacebookShareButton url={url}>
@@ -151,21 +151,16 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
                   <h3 className='line-clamp-1'>{url}</h3>
                   <Button
                     onClick={() => {
-                      onShowToast('đã copy vào clipBoard', typeToast.success);
-                      navigator.clipboard.writeText(window.location.href);
+                      onShowToast("đã copy vào clipBoard", typeToast.success)
+                      navigator.clipboard.writeText(window.location.href)
                     }}
                     content='Sao chép'
                     className='rounded-full min-w-max px-2.5 py-1.5 text-black text-sm font-bold flex items-center gap-1.5 bg-primary hover:opacity-80 duration-300'
                   />
                 </div>
               </div>
-            </div>
-          )}
-          {showPopup.popup === popup.trailerPopup && (
-            <div className='relative flex-center h-full '>
-              <div className={`-z-10 absolute w-full h-full scale-[1] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-12`}>
-                <Image src='/images/logo.jpg' className='w-full h-full object-contain  opacity-50' height={1000} width={1000} alt='logo' />
-              </div>
+            )}
+            {showPopup.popup === popup.trailerPopup && (
               <div className='w-full max-w-[85vw] md:max-w-[60vw]'>
                 <iframe
                   allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
@@ -175,9 +170,10 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
                   allowFullScreen={true}
                 />
               </div>
-            </div>
-          )}
-          {showPopup.popup === popup.packages && (
+            )}
+          </div>
+
+          {/* {showPopup.popup === popup.packages && (
             <div className='relative container overflow-auto  h-screen pb-10 md:h-full'>
               <div className='grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-x-4 md:gap-x-7 gap-y-6 pr-5 md:px-0 sm:h-auto h-[1500px]'>
                 {comboList.map(({ id, defaultMoney, desc, discountMoney, title, type }, index) => (
@@ -382,9 +378,9 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
                 </form>
               </div>
             </div>
-          )}
+          )} */}
         </div>
-      )} */}
+      )}
     </main>
   )
 }

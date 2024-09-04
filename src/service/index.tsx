@@ -1,9 +1,9 @@
-import { categoryHome } from '@/utils/constants';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { categoryHome } from "@/utils/constants"
+import { createAsyncThunk } from "@reduxjs/toolkit"
+import axios from "axios"
 // import dayjs from 'dayjs';
 
-const BASE_API = process.env.NEXT_PUBLIC_BASE_API;
+const BASE_API = process.env.NEXT_PUBLIC_BASE_API
 // const BASE_API_BANK = process.env.NEXT_PUBLIC_BASE_API_BANK;
 // export const getCatMovie = async (cat: string, page: number = 1) => {
 //   try {
@@ -22,44 +22,57 @@ const BASE_API = process.env.NEXT_PUBLIC_BASE_API;
 //     return [];
 //   }
 // };
+//detail
+export const getDetailMovie = createAsyncThunk("detail", async ({ slug }: { slug: string }) => {
+  try {
+    const response = await axios.get(`${BASE_API}/phim/${slug}`)
+    if (response.status === 200) {
+      return response.data
+    } else {
+      throw new Error("Data not found!")
+    }
+  } catch (error) {
+    return null
+  }
+})
 
-export const getBanner = createAsyncThunk('banner', async (page: number) => {
+export const getBanner = createAsyncThunk("banner", async (page: number) => {
   try {
     const response = await axios.get(`${BASE_API}/danh-sach/phim-moi-cap-nhat`, {
       params: {
         page: page,
       },
-    });
+    })
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      throw new Error('Data not found!');
+      throw new Error("Data not found!")
     }
   } catch (error) {
-    return [];
+    return []
   }
-});
-export const getCategoryItem = async ({ page, slug }: { page: number; slug: string })  => {
-    try {
+})
+export const getCategoryItem = async ({ page, slug }: { page: number; slug: string }) => {
+  try {
     const response = await axios.get(`${BASE_API}/danh-sach`, {
       params: {
         category: slug,
         page: page,
         limit: 24,
       },
-    });
+    })
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      throw new Error('Data not found!');
+      throw new Error("Data not found!")
     }
   } catch (error) {
-    return [];
+    return []
   }
 }
-export const getAllHomeCategory = createAsyncThunk('category', async () => {
+export const getAllHomeCategory = createAsyncThunk("category", async () => {
   try {
-    const response = await Promise.all(categoryHome.map((item:any) => getCategoryItem({page: 1, slug: item})))
+    const response = await Promise.all(categoryHome.map((item: any) => getCategoryItem({ page: 1, slug: item })))
     // const response = await axios.get(`${BASE_API}/danh-sach`, {
     //   params: {
     //     category: slug,
@@ -74,9 +87,9 @@ export const getAllHomeCategory = createAsyncThunk('category', async () => {
     //   throw new Error('Data not found!');
     // }
   } catch (error) {
-    return [];
+    return []
   }
-});
+})
 
 // // detail movie
 // export const getDetailsMovie = async (slug: string) => {
