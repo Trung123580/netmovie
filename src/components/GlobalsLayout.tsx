@@ -1,14 +1,14 @@
-'use client';
-import Loading from '@/components/Loading';
-import Banner from '@/layout/Banner';
-import Footer from '@/layout/Footer';
-import Header from '@/layout/Header';
-import { RootState } from '@/store/store';
-import Link from 'next/link';
+"use client"
+import Loading from "@/components/Loading"
+import Banner from "@/layout/Banner"
+import Footer from "@/layout/Footer"
+import Header from "@/layout/Header"
+import { RootState } from "@/store/store"
+import Link from "next/link"
 // import Loading from '@/components/Loading';
 // import { useApp } from '@/context/ContextProvider';
-import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from "react"
+import { useSelector } from "react-redux"
 // import { FaGooglePlusSquare, FaSquareXTwitter, IoClose, IoIosSearch, IoMicOutline, MdOutlineRecordVoiceOver } from '@/utils/icons';
 // import { FacebookShareButton, TwitterShareButton, XIcon, FacebookIcon, TelegramShareButton, TelegramIcon } from 'react-share';
 // import { ToastContainer } from 'react-toastify';
@@ -21,8 +21,8 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
   //   const router = useRouter();
   //   const { handle, user, isLoading, showPopup }: any = useApp();
   //   const { onLoginGG, onLoginTW, onShowToast, onPayMoMo, onShowPopup, onRemovePackage } = handle;
-  const [hydrated, setHydrated] = useState(false);
-  const { isLoading }: {isLoading:boolean} = useSelector((state: RootState) => state.storeApp);
+  const [hydrated, setHydrated] = useState(false)
+  const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
   //   const [valueVoice, setValueVoice] = useState('');
   //   const [isActiveVoice, setIsActiveVoice] = useState(false);
   //   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -71,8 +71,8 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
   //   };
   //   const url = handleUrlShare();
   useEffect(() => {
-    setHydrated(true);
-  }, []);
+    setHydrated(true)
+  }, [])
   //   useEffect(() => {
   //     if (showPopup.isShow) {
   //       document.body.classList.add('overflow-y-hidden');
@@ -104,8 +104,8 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
   //     }
   //   };
   if (!hydrated && isLoading) {
-    return <Loading />;
-  } 
+    return <Loading />
+  }
   return (
     <main>
       <Header />
@@ -124,8 +124,6 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
         pauseOnHover
         theme='dark'
       /> */}
-      <Link href={'/todo/item'}>todo</Link>
-      <Link href={'/the-loai/adas'}>the loai</Link>
       {/* {showPopup.isShow && (
         <div className='bg-black/95 fixed top-0 left-0 w-full h-screen z-50 p-4'>
           <div className='flex justify-end cursor-pointer'>
@@ -388,6 +386,6 @@ const GlobalsLayout = ({ children }: Readonly<{ children: React.ReactNode }>) =>
         </div>
       )} */}
     </main>
-  );
-};
-export default GlobalsLayout;
+  )
+}
+export default GlobalsLayout

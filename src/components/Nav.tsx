@@ -1,12 +1,12 @@
-'use client';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { IoIosSearch, IoMenu, LuUserSquare } from '@/utils/icons';
-import Image from 'next/image';
-import Button from '@/components/Button';
-import { filterNameMovie } from '@/utils/helpers';
-import { v4 as uuid } from 'uuid';
-import React from 'react';
+"use client"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { IoIosSearch, IoMenu, LuUserSquare } from "@/utils/icons"
+import Image from "next/image"
+import Button from "@/components/Button"
+import { filterNameMovie } from "@/utils/helpers"
+import { v4 as uuid } from "uuid"
+import React from "react"
 const Nav = ({
   onToggleNavbar,
   isShowNavBar,
@@ -18,52 +18,43 @@ const Nav = ({
   isMobile,
 }: // onShowPopup,
 navTypes) => {
-  const pathName = usePathname();
+  const pathName = usePathname()
   // const router = useRouter();
   return (
     <nav className='flex items-center justify-center gap-x-2 '>
-      <ul
-        className={`${
-          isShowNavBar ? 'block' : 'hidden'
-        } z-50  lg:flex lg:gap-6 fixed lg:static text-black bg-overlay lg:bg-transparent top-0 h-full w-80 right-0 lg:w-auto`}>
-        {convertHeader.map(({ path, name, id, category, Icon }: any) => (
-          <li
-            key={id}
-            className='group md:py-0 md:px-0 border-b-2 font-medium relative border-b-black lg:border-b-transparent text-white md:text-black cursor-default hover:bg-black lg:hover:bg-transparent '>
+      <ul className={`${isShowNavBar ? "block" : "hidden"} z-50  lg:flex lg:gap-6 fixed lg:static text-black bg-overlay lg:bg-transparent top-0 h-full w-80 right-0 lg:w-auto`}>
+        {convertHeader.map(({ path, name, id, category, Icon }: any, index: number) => (
+          <li key={id} className='group md:py-0 md:px-0 border-b-2 font-medium relative border-b-black lg:border-b-transparent text-white md:text-black cursor-default hover:bg-black lg:hover:bg-transparent '>
             <Button
               onClick={() => {
                 if (category.length && isShowNavBar) {
-                  onToggleOpenMenuCategory(path);
-                  return;
+                  onToggleOpenMenuCategory(path)
+                  return
                 }
                 if (isMobile && isShowNavBar) {
-                  onToggleNavbar();
+                  onToggleNavbar()
                 }
               }}
-              className={`${
-                isShowNavBar && 'text-start flex items-center gap-x-2 '
-              } first-letter:uppercase font-semibold uppercase px-4 text-base text-white lg:px-0 w-full inline-block py-3 hover:text-primary lg:hover:bg-transparent transition ${
-                pathName === path ? '!text-primary lg:text-primary lg:bg-transparent' : ''
+              className={`${isShowNavBar && "text-start flex items-center gap-x-2 "} first-letter:uppercase font-semibold uppercase px-4 text-base text-white lg:px-0 w-full inline-block py-3 hover:text-primary lg:hover:bg-transparent transition ${
+                pathName === path ? "!text-primary lg:text-primary lg:bg-transparent" : ""
               }`}
               content={name}
               // href={category.length && isShowNavBar ? '' : path}
-              icon={isShowNavBar ? <Icon fontSize={23} className='text-primary' /> : ''}
+              icon={isShowNavBar ? <Icon fontSize={23} className='text-primary' /> : ""}
             />
             {!!category.length && (
               <ul
-                className={`${isShowNavBar && `!static !grid-cols-2 !w-full ${openMenuCategory === path ? '!grid' : '!hidden'}`} ${
-                  path === '/loai-phim' ? '!grid-cols-2 !-left-[90%]' : ''
-                } ${
-                  path === '/top-phim' ? '!py-0' : ''
-                } group-hover:grid grid dropdown-menu absolute duration-300 !px-4 grid-cols-4 top-full -left-[180%] z-50 text-sm text-white bg-blur`}>
+                className={`${isShowNavBar && `!static !grid-cols-2 !w-full ${openMenuCategory === path ? "!grid" : "!hidden"}`} ${path === "/loai-phim" ? "!grid-cols-2 !-left-[90%]" : ""} ${path === "/top-phim" ? "!py-0" : ""} min-h-[450px] h-[450px] overflow-auto ${
+                  index === 0 ? "!h-auto !min-h-min" : ""
+                } group-hover:grid grid dropdown-menu absolute duration-300 !px-4 grid-cols-2 top-full -left-[180%] z-50 text-sm text-white bg-blur`}>
                 {category.map((item: any, index: number) => (
                   <li
                     key={item.id}
-                    className={`cursor-pointer capitalize relative group/item w-full ${path === '/top-phim' ? 'py-2' : ''}`}
+                    className={`cursor-pointer capitalize relative group/item w-full ${path === "/top-phim" ? "py-2" : ""}`}
                     onClick={() => {
-                      if (isShowNavBar) onToggleNavbar();
+                      if (isShowNavBar) onToggleNavbar()
                     }}>
-                    <Link className={`hover:text-primary  w-full inline-block duration-300 text-base`} prefetch={true} href={path + '/' + item.path}>
+                    <Link className={`hover:text-primary  w-full inline-block duration-300 text-base`} prefetch={true} href={path + "/" + item.path}>
                       {/* 
                       === '/loai-phim'
                           ? `/loai-phim/${
@@ -78,32 +69,6 @@ navTypes) => {
                           : `/quoc-gia/${item.slug}`
                       */}
                       {item.name || filterNameMovie(item.type)}
-                      {!!item.menuLv2?.length && (
-                        <ul
-                          className={`${
-                            isShowNavBar
-                              ? 'static overflow-y-auto max-h-[30vh]'
-                              : 'absolute text-center overflow-y-auto overflow-x-hidden  max-h-[50vh]'
-                          }  hidden w-auto top-full  left-[-25%] group-hover/item:block  bg-blur `}>
-                          {item.menuLv2.map((it: any, id: number) => (
-                            <li className='pt-1 ' key={uuid()}>
-                              <Link
-                                href={
-                                  item.path === '/loai-phim'
-                                    ? `/top-phim/loai-phim${
-                                        id <= 1 ? `/type/${it.type}` : id >= 2 && id <= 4 ? `/language/${it.type}` : `/status/${it.type}`
-                                      }`
-                                    : item.path === '/the-loai'
-                                    ? `/top-phim/the-loai/${it.cate_slug}`
-                                    : `/top-phim/quoc-gia/${it.slug}`
-                                }
-                                className='hover:!text-primary !text-white   duration-300 text-nowrap '>
-                                {it.name || filterNameMovie(it.type)}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
                     </Link>
                   </li>
                 ))}
@@ -134,17 +99,8 @@ navTypes) => {
       )} */}
       <Link href='/yeu-thich' className='cursor-pointer'>
         <abbr title='Yêu thích'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            aria-hidden='true'
-            role='img'
-            className='iconify iconify--mdi text-white hover:text-primary transition'
-            width='30'
-            height='30'
-            viewBox='0 0 24 24'>
-            <path
-              fill='currentColor'
-              d='M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m7 14l.72-.66C15.3 14 17 12.46 17 10.57c0-1.54-1.21-2.75-2.75-2.75c-.87 0-1.7.41-2.25 1.05a3 3 0 0 0-2.25-1.05C8.21 7.82 7 9.03 7 10.57c0 1.89 1.7 3.43 4.28 5.77z'></path>
+          <svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' className='iconify iconify--mdi text-white hover:text-primary transition' width='30' height='30' viewBox='0 0 24 24'>
+            <path fill='currentColor' d='M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m7 14l.72-.66C15.3 14 17 12.46 17 10.57c0-1.54-1.21-2.75-2.75-2.75c-.87 0-1.7.41-2.25 1.05a3 3 0 0 0-2.25-1.05C8.21 7.82 7 9.03 7 10.57c0 1.89 1.7 3.43 4.28 5.77z'></path>
           </svg>
         </abbr>
       </Link>
@@ -156,7 +112,7 @@ navTypes) => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Nav;
+export default Nav
