@@ -15,9 +15,10 @@ import { checkVulgarWord, convertJson } from "@/utils/helpers"
 import { useRouter } from "next/navigation"
 import CardProduct from "@/components/CardProduct"
 import { useDispatch, useSelector } from "react-redux"
-import { getDetailMovie } from "@/service"
+import { getDetailMovie, getMoviesRelate } from "@/service"
 import { RootState } from "@/store/store"
 import { storeState } from "@/store/storeApi"
+import useResize from "./hook/useResize"
 enum numberPage {
   zero,
   one,
@@ -29,7 +30,7 @@ const date = new Date()
 const Details = ({ slug }: { slug: string }) => {
   const router = useRouter()
   // const [dataDetailMovie, setDataDetailMovie] = useState<any>(null)
-  // const [dataRelated, setDataRelated] = useState<any>([])
+  const [dataRelated, setDataRelated] = useState<any>([])
   // const [dataMovie, setDataMovie] = useState<any>([])
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false)
   const [linkPlay, setLinkPlay] = useState<string>("")
@@ -77,9 +78,10 @@ const Details = ({ slug }: { slug: string }) => {
   const pathName = usePathname()
   const searchPractice: number | null = Number(searchParams.get("tap") ?? numberPage.one)
   const {
-    data: { detail },
+    data: { detail, relate },
   }: storeState = useSelector((state: RootState) => state.storeApp)
   const dispatch = useDispatch()
+  const { device } = useResize()
   console.log(detail)
   console.log(linkPlay)
 
@@ -105,8 +107,11 @@ const Details = ({ slug }: { slug: string }) => {
     if (detail) {
       setIsLoadingVideo(false)
       setLinkPlay(detail.episodes[0].server_data[0].link_embed)
+      dispatch(getMoviesRelate({ country: detail.movie.country[0]?.slug, status: detail.movie.status }) as any)
     }
   }, [detail])
+  console.log(relate)
+
   // call episodes
   // phim le type single
   // phim tap series
@@ -223,7 +228,7 @@ const Details = ({ slug }: { slug: string }) => {
     }
   }
 
-  // if (!detail) return <></>
+  if (!detail) return <></>
   return (
     <>
       <DetailsBanner data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
@@ -258,15 +263,23 @@ const Details = ({ slug }: { slug: string }) => {
                 <Loading hFull={true} />
               </div>
             ) : (
+              <></>
               // <video controls={true} autoPlay={true} className='w-full bg-white/5 aspect-video overflow-hidden bg-stone-900 rounded-md' src={linkPlay}></video>
-              <iframe allowFullScreen referrerPolicy='no-referrer' scrolling='no' className='w-full bg-white/5 aspect-video overflow-hidden bg-stone-900 rounded-md' src={linkPlay ?? ""} frameBorder='0' allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'></iframe>
+              // <iframe
+              //   allowFullScreen
+              //   referrerPolicy='no-referrer'
+              //   scrolling='no'
+              //   className='w-full bg-white/5 aspect-video overflow-hidden bg-stone-900 rounded-md'
+              //   src={linkPlay ?? ""}
+              //   frameBorder='0'
+              //   allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'></iframe>
               // <ReactPlayer url={linkPlay} playing={true} className='w-full bg-white/5 aspect-video overflow-hidden bg-stone-900 rounded-md' />
             )}
           </div>
         </div>
       </div>
       <div className='container'>{/* <Comments {...optionComment} /> */}</div>
-      {/* <div className='container'>
+      <div className='container'>
         <TitlePath title='Phim Liên Quan' onClickNext={() => handleNext()} onClickPrev={() => handlePrev()} />
         <Swiper
           ref={refSwiper}
@@ -311,11 +324,16 @@ const Details = ({ slug }: { slug: string }) => {
           modules={[Autoplay]}>
           {dataRelated.map((movie: any) => (
             <SwiperSlide key={movie?.movie_id} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-              <CardProduct device='pc' data={movie} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === movie.id)} />
+              <CardProduct
+                device={device}
+                data={movie}
+                // onToggleMovie={() => onToggleMovie(movie)}
+                //  findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === movie.id)}
+              />
             </SwiperSlide>
           ))}
         </Swiper>
-      </div> */}
+      </div>
     </>
   )
 }

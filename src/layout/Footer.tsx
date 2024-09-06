@@ -1,11 +1,11 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { aboutIcon, aboutUs } from '@/utils/constants';
+import Image from "next/image"
+import Link from "next/link"
+import { aboutIcon, aboutUs } from "@/utils/constants"
 const Footer = () => {
   return (
     <footer className='container my-10'>
       <div className='py-6 md:py-8 border-t-[1px] border-primary'>
-        <Link href='/' className='flex items-center gap-x-[10px] flex-basis '>
+        <Link href='/' className='w-max inline-block'>
           <Image src='/images/logo.jpg' className='w-40  md:w-52 h-full object-contain aspect-[208/41]' height={1000} width={1000} alt='logo' />
         </Link>
         <div className='flex justify-between items-center mt-6 md:mt-8'>
@@ -28,7 +28,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

@@ -4,12 +4,13 @@ import CardProduct from "@/components/CardProduct"
 import TitlePath from "@/components/TitlePath"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Pagination } from "@/utils/moduleMaterial"
-import { category } from "@/utils/constants"
+import { topMovies } from "@/utils/constants"
 import { useDispatch, useSelector } from "react-redux"
 import { setIsLoading } from "@/store/storeApi"
 import { RootState } from "@/store/store"
 import Loading from "@/components/Loading"
 import useResize from "./hook/useResize"
+import { PaginationItem } from "@mui/material"
 enum numberPage {
   zero,
   one,
@@ -17,7 +18,7 @@ enum numberPage {
   three,
   four,
 }
-function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
+function TypeMovie({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
   const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
   const [dataNewMovie, setDataNewMovie] = useState<any>([])
   const [totalPages, setTotalPages] = useState<number>(numberPage.one)
@@ -28,18 +29,18 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
       return 0
     }
   })
+  const { device } = useResize()
   // const {
   //   currentUser,
   //   handle: { onLoading, onToggleMovie },
   //   headerData: { category },
   // }: any = useApp();
-  const { device } = useResize()
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathName = usePathname()
   const searchPage: number | null = Number(searchParams.get("page") ?? numberPage.one)
-  const categoryName = slug === "hoat-hinh" ? "Anime" : category.find((item: any) => item.path === slug)?.name
+  const categoryName = topMovies.find((item: any) => item.path === slug)?.name
   const handleScrollToTop = () => {
     window.scrollTo({ top: numberPage.one, behavior: "smooth" })
   }
@@ -86,7 +87,7 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   return (
     <div className='container'>
       <TitlePath year={year} sort={true} onChange={handleChangeYear} title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  md:gap-x-5 gap-x-[15px] gap-y-6 md:gap-y-10'>
+      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  md:gap-x-5 gap-x-[15px] gap-y-6 md:gap-y-10 '>
         {dataNewMovie.map((movie: any) => (
           <CardProduct
             key={movie._id}
@@ -98,10 +99,23 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
         ))}
       </div>
       <div className='my-10 flex justify-end'>
-        <Pagination count={totalPages} page={page} onChange={handleChange} shape='rounded' color='primary' variant='outlined' />
+        {/* <Pagination count={totalPages} page={page} onChange={handleChange} shape='rounded' color='primary' variant='outlined' /> */}
+        <Pagination
+          renderItem={(item) => {
+            // slots={{ previous: MdKeyboardDoubleArrowLeft, next: MdKeyboardDoubleArrowRight }}
+            return <PaginationItem className='!text-lg !text-white' {...item} />
+          }}
+          count={totalPages}
+          page={page}
+          onChange={handleChange}
+          shape='rounded'
+          color='primary'
+          variant='outlined'
+          className='wrapper_Pagination'
+        />
       </div>
     </div>
   )
 }
 
-export default Category
+export default TypeMovie

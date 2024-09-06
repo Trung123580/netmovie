@@ -1,6 +1,5 @@
-import { getBanner, getAllHomeCategory, getDetailMovie } from "@/service"
-import { createSlice } from "@reduxjs/toolkit"
-import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit"
+import { getBanner, getAllHomeCategory, getDetailMovie, getMoviesRelate } from "@/service"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface storeState {
   isLoading: boolean
@@ -8,6 +7,7 @@ export interface storeState {
     banner: null | any
     category: any[]
     detail: null | any
+    relate: any[]
   }
 }
 
@@ -20,6 +20,7 @@ const initialState: storeState = {
     banner: null,
     category: [],
     detail: null,
+    relate: [],
   },
 }
 
@@ -65,6 +66,10 @@ export const storeSlice = createSlice({
     builder.addCase(getDetailMovie.fulfilled, (state, action) => {
       state.data.detail = action.payload
       state.isLoading = false
+    })
+    // movies
+    builder.addCase(getMoviesRelate.fulfilled, (state, action) => {
+      state.data.relate = action.payload
     })
   },
 })

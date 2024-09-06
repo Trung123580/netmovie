@@ -83,7 +83,7 @@ export const category: menuCategory = [
   },
   {
     id: "2bf3158e-a5fb-4a55-9a68-9d46d351332e",
-    name: "Hoạt Hình",
+    name: "Anime",
     path: "hoat-hinh",
   },
   {
@@ -269,7 +269,7 @@ export const country = [
     path: "hong-ko",
   },
 ]
-const topMovies = [
+export const topMovies = [
   { id: uuid(), name: "TV shows", path: "tvshows" },
   { id: uuid(), name: "Phim lẻ", path: "single" },
   { id: uuid(), name: "Phim bộ", path: "series" },
@@ -307,7 +307,14 @@ export const aboutIcon = [
   { id: uuid(), icon: FaTwitterSquare, path: "https://x.com/" },
   { id: uuid(), icon: FaInstagramSquare, path: "https://www.instagram.com/" },
 ]
-
+export const years = Array.from({ length: new Date().getFullYear() - 2000 + 1 }, (_, i) => {
+  const year = 2000 + i
+  return {
+    id: uuid(),
+    name: year,
+    path: year,
+  }
+})
 // export const comboList = [
 //   {
 //     id: uuid(),

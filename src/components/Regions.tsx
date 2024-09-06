@@ -4,7 +4,7 @@ import CardProduct from "@/components/CardProduct"
 import TitlePath from "@/components/TitlePath"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { Pagination } from "@/utils/moduleMaterial"
-import { category } from "@/utils/constants"
+import { country } from "@/utils/constants"
 import { useDispatch, useSelector } from "react-redux"
 import { setIsLoading } from "@/store/storeApi"
 import { RootState } from "@/store/store"
@@ -17,8 +17,8 @@ enum numberPage {
   three,
   four,
 }
-function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
-  const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
+function Regions({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
+  const { isLoading }: { isLoading: boolean | unknown } = useSelector((state: RootState) => state.storeApp)
   const [dataNewMovie, setDataNewMovie] = useState<any>([])
   const [totalPages, setTotalPages] = useState<number>(numberPage.one)
   const [year, setYear] = useState(() => {
@@ -39,7 +39,7 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   const router = useRouter()
   const pathName = usePathname()
   const searchPage: number | null = Number(searchParams.get("page") ?? numberPage.one)
-  const categoryName = slug === "hoat-hinh" ? "Anime" : category.find((item: any) => item.path === slug)?.name
+  const categoryName = country.find((item: any) => item.path === slug)?.name
   const handleScrollToTop = () => {
     window.scrollTo({ top: numberPage.one, behavior: "smooth" })
   }
@@ -104,4 +104,4 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   )
 }
 
-export default Category
+export default Regions

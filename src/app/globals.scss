@@ -207,3 +207,48 @@ a {
     width: 2.5rem !important;
   }
 }
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: $color-white !important;
+}
+.css-1pysi21-MuiFormLabel-root-MuiInputLabel-root {
+  color: $color-white !important;
+}
+.css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+  color: $color-white !important;
+}
+.css-6hp17o-MuiList-root-MuiMenu-list {
+  background: #000;
+  color: $color-white !important;
+  overflow: auto !important;
+  height: 400px !important;
+}
+.css-99wn1p-MuiList-root-MuiMenu-list {
+  height: 50vh !important;
+  min-height: 50vh !important;
+  background-color: $color-black;
+  color: $color-white;
+  overflow-y: scroll;
+}
+.css-1h4bzp1-MuiButtonBase-root-MuiMenuItem-root:hover {
+  background-color: $color-yellow !important;
+  color: $color-black;
+  transition: 0.3s all linear;
+}
+.wrapper_Pagination {
+  transition: 0.3s all linear;
+  li > button {
+    color: white !important;
+    background: #000 !important;
+    &:hover {
+      color: $color-black !important;
+      background: $color-yellow !important;
+    }
+  }
+  .Mui-selected {
+    border-color: transparent !important;
+    background: $color-yellow !important;
+    // border-radius: 0 !important;
+    color: $color-black !important;
+  }
+}
