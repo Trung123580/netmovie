@@ -40,8 +40,8 @@ export const storeSlice = createSlice({
     setIsLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload
     },
-    clearDataCategory: (state, action: PayloadAction<[]>) => {
-      // state.data.banner = null;
+    clearDataCategory: (state, action: PayloadAction<any>) => {
+      state.data.banner = action.payload;
       // state.data.category = action.payload;
     },
   },

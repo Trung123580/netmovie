@@ -166,3 +166,16 @@ export function removeVietnameseTones(str: string) {
   str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ")
   return str
 }
+export const convertLinkPlayer = ({ link }: { link: string }) => {
+  if (link.endsWith(".m3u8")) {
+    const pathLink = (link.split("url=").find((item) => item.includes(".m3u8")) as string) || ""
+    return { linkPlay: pathLink, type: "video" }
+  } else {
+    return { linkPlay: link, type: "iframe" }
+  }
+}
+export const formatDuration = (value: number) => {
+  const minute = Math.floor(value / 60)
+  const secondLeft = value - minute * 60
+  return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`
+}

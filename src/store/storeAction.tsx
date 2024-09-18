@@ -1,17 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { PayloadAction } from '@reduxjs/toolkit';
 
-export interface storeState {
-  //   isLoading: boolean;
+export interface storeAction {
+  isPlay: boolean
   //   data: null | string[] | number[] | any[];
 }
 
-// tao store => store : call api
-// tao store => store : call luu data
-
-const initialState: storeState = {
-  //   isLoading: true,
-  //   data: null,
+const initialState: storeAction = {
+  isPlay: false
 };
 
 export const storeSlice = createSlice({
@@ -27,10 +23,13 @@ export const storeSlice = createSlice({
     // incrementByAmount: (state, action: PayloadAction<number>) => {
     //   state.value += action.payload;
     // },
+    togglePlayVideo : (state, action: PayloadAction<boolean>) => {
+      state.isPlay = action.payload
+    }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const {} = storeSlice.actions;
+export const { togglePlayVideo } = storeSlice.actions;
 
 export default storeSlice.reducer;

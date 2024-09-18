@@ -1,11 +1,11 @@
-import { IoMenu, IoClose, IoShareSocial, IoMicOutline } from "react-icons/io5" // menuNav // close // Share // mic
+import { IoMenu, IoClose, IoShareSocial, IoMicOutline, IoPlay, IoPause, IoRepeatOutline } from "react-icons/io5" // menuNav // close // Share // mic
 import { FaPlay, FaEye } from "react-icons/fa" // play // eye
 import { MdTimelapse, MdNavigateNext, MdLocalMovies, MdOutlineRecordVoiceOver } from "react-icons/md" // time // date //next prev // category // movie // mic voice
 import { IoIosSearch } from "react-icons/io" // search
 import { RiMovie2Line, RiGlobalLine } from "react-icons/ri" // movie // global
-import { FaRankingStar } from "react-icons/fa6" // rank
-import { LuHeart, LuHeartCrack, LuUserSquare } from "react-icons/lu" // heart // heartCrack // login
-import { AiOutlineLike, AiOutlineSend, AiOutlineLoading3Quarters } from "react-icons/ai" // like // send // loading
+import { FaRankingStar, FaCirclePlay, FaCirclePause } from "react-icons/fa6" // rank
+import { LuHeart, LuHeartCrack, LuUserSquare, LuVolume2, LuVolumeX, LuVolume1, LuRectangleHorizontal } from "react-icons/lu" // heart // heartCrack // login
+import { AiOutlineLike, AiOutlineSend, AiOutlineLoading3Quarters, AiOutlineFullscreen, AiOutlineFullscreenExit } from "react-icons/ai" // like // send // loading
 import { BiReply } from "react-icons/bi" // replay
 import { HiOutlineDotsHorizontal } from "react-icons/hi"
 import { TbEdit } from "react-icons/tb" // edit
@@ -50,4 +50,15 @@ export {
   FaGithubSquare,
   FaTwitterSquare,
   FaInstagramSquare,
+  LuVolume2,
+  LuVolumeX,
+  LuVolume1,
+  FaCirclePlay,
+  FaCirclePause,
+  IoPlay,
+  IoPause,
+  IoRepeatOutline,
+  LuRectangleHorizontal,
+  AiOutlineFullscreen,
+  AiOutlineFullscreenExit,
 }

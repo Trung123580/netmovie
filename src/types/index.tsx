@@ -87,3 +87,21 @@ type AuthContextType = {
     onShowToast: (message: string, type: string) => void
   }
 }
+type dataVideo = {
+  linkPlay: string
+  type: string
+}
+type VideoPlayer = {
+  pip: boolean
+  onEnablePIP: () => void
+  onDisablePIP: () => void
+  sourceVideo: string
+  isPlay: boolean
+  onPlay: () => void
+  onPause: () => void
+  onProgress: () => void
+  volume: number
+  onReady: () => void
+  onBuffer: () => void
+  onBufferEnd: () => void
+}

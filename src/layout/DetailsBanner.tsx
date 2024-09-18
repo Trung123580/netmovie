@@ -50,7 +50,8 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
               <div>
                 <MdDateRange className='text-primary' />
                 <span>
-                  {data?.episode_current === "Full" ? 1 : data?.status === "completed" ? data?.episode_total.split(" ")[0] : String(data?.episode_current).split(" ")[1]}/{data?.episode_total?.split(" ").length ? data?.episode_total.split(" ")[0] : data?.episode_total}
+                  {data?.episode_current === "Full" ? 1 : data?.status === "completed" ? data?.episode_total.split(" ")[0] : String(data?.episode_current).split(" ")[1]}/
+                  {data?.episode_total?.split(" ").length ? data?.episode_total.split(" ")[0] : data?.episode_total}
                 </span>
               </div>
               <div className='-tracking-tighter'>
@@ -74,7 +75,12 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
             <Button content='Copy Link' onClick={() => onShowPopup(popup.sharePopup)} icon={<IoShareSocial fontSize={20} />} className='flex-col justify-center items-center gap-1 text-sm flex hover:text-primary duration-300' />
             <span className='h-12 w-0.5 bg-white/10 md:block'></span>
             <div className='flex-col sm:flex-row flex items-center gap-3 text-sm font-bold '>
-              <Button content='Trailer' onClick={() => onShowPopup(popup.trailerPopup, getIdVideo(data.trailer_url))} disabled={data?.trailer_url ? false : true} className='rounded-full bg-primary text-black px-8 py-3 disabled:bg-borderColor disabled:text-white' />
+              <Button
+                content='Trailer'
+                onClick={() => onShowPopup(popup.trailerPopup, getIdVideo(data.trailer_url))}
+                disabled={data?.trailer_url ? false : true}
+                className='rounded-full bg-primary text-black px-8 py-3 disabled:bg-borderColor disabled:text-white'
+              />
               <Button
                 content={findIsLoveMovie ? "Bỏ Thích" : "Yêu Thích"}
                 onClick={onToggleMovie}
@@ -83,6 +89,8 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
               />
             </div>
           </div>
+          <button>xem phim</button>
+          {/* scroll den xem phim */}
         </div>
       </div>
     </div>

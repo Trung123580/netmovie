@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import storeApi from '@/store/storeApi';
+import storeAction from '@/store/storeAction';
 export const store = configureStore({
   reducer: {
     storeApp: storeApi,
+    storeAction: storeAction
   },
 });
 
