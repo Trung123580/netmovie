@@ -109,7 +109,7 @@ const VideoControl = (props: any) => {
             // className={cx('icon', {
             // volume: true,
             // })}</div>
-            className='cursor-pointer ml-[5px] p-[5px] relative z-10'>
+            className='cursor-pointer ml-[5px] p-[5px] relative z-10 flex items-center justify-center'>
             {volume >= 60 ? (
               <LuVolume2 size={20} onClick={() => setChangeVolume(0)} />
             ) : volume > 0 && volume < 60 ? (
@@ -117,7 +117,7 @@ const VideoControl = (props: any) => {
             ) : volume === 0 ? (
               <LuVolumeX size={20} onClick={() => setChangeVolume(100)} />
             ) : null}
-            <div className='rotate-[-89.5deg] absolute bottom-[55px] -right-[47px] opacity-0 group-hover:opacity-100 duration-200 '>
+            <div className='opacity-100 group-hover:opacity-100 duration-200 flex items-center justify-center '>
               <Slider
                 // className={cx('slider-volume')}
                 aria-label='Volume'
@@ -131,20 +131,26 @@ const VideoControl = (props: any) => {
                 }}
                 sx={{
                   mx: "10px",
-                  height: 5,
+                  height: 4,
                   width: 100,
                   color: "rgb(228, 216, 4)",
                   "&:hover": {
-                    height: 4,
+                    height: 6,
                   },
                   "& .MuiSlider-thumb": {
                     width: 8,
                     height: 8,
+                    display: "none",
                     "&::before": {
                       boxShadow: "0 2px 8px 0 rgba(0,0,0,0.4)",
                     },
                     "&:hover, &.Mui-focusVisible": {
                       boxShadow: `0px 0px 0px 4px ${theme?.palette.mode === "dark" ? "rgb(255 255 255 / 16%)" : "rgb(0 0 0 / 16%)"}`,
+                    },
+                    "&.Mui-active": {
+                      width: 10,
+                      height: 10,
+                      display: "block",
                     },
                   },
                   "& .MuiSlider-rail": {

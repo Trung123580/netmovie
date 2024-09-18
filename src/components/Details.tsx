@@ -38,27 +38,26 @@ const Details = ({ slug }: { slug: string }) => {
     linkPlay: "",
     type: "",
   })
-  const [unmounted, setUnmounted] = useState<boolean>(false)
   const [currentSeconds, setCurrentSeconds] = useState<number>(0)
   const [volume, setVolume] = useState(100)
   const { linkPlay, type } = dataVideo
   const refMovie = useRef<any>(null)
   const refPlayer = useRef<any>(null)
   const refSwiper = useRef<any>(null)
-  const hideMouseRef = useRef<any>(null);
+  const refTimeOut = useRef<NodeJS.Timeout | null>(null)
   const [statePlayVideo, setStatePlayVideo] = useState({
     isPlay: false,
     isShowIcon: false,
     defaultIsPlay: false,
     isMouse: true,
     isLoadingVideo: false,
-    quality: localStorage.getItem('quality') || '720p', // tao localStorage
+    quality: localStorage.getItem("quality") || "720p", // tao localStorage
     isOpenQuality: false,
     isOpenSetting: false,
     percentSecondsLoaded: 0,
     isOpenDrawer: false,
-  });
-  const {isMouse} = statePlayVideo
+  })
+  const { isMouse } = statePlayVideo
   // const {
   //   user,
   //   isAuthenticated,
@@ -126,17 +125,6 @@ const Details = ({ slug }: { slug: string }) => {
     }
   }
   const handleTogglePlayVideo = () => dispatch(togglePlayVideo(!isPlay))
-  useEffect(() => {
-    let time: any
-    if (isPlay) {
-      time = setTimeout(() => {
-        setUnmounted(true)
-      }, 1000)
-    } else {
-      setUnmounted(false)
-    }
-    return () => time && clearTimeout(time)
-  }, [isPlay])
   const optionVideoControls = {
     isPlay: isPlay,
     // isAutoPlay: isAutoPlay,
@@ -180,65 +168,65 @@ const Details = ({ slug }: { slug: string }) => {
     //   if (document.fullscreenElement !== null) await document.exitFullscreen();
     // },
     onChangeFullScreen: async () => {
-      if (!refPlayer.current) return;
+      if (!refPlayer.current) return
       if (document.fullscreenElement === null) {
-        await hideMouseRef.current?.requestFullscreen();
+        const wrapperVideo = document.querySelector("#wrapperVideo")
+        if (wrapperVideo) await wrapperVideo.requestFullscreen()
+        // await hideMouseRef.current?.requestFullscreen();
         // if (isLoadingVideo) setStatePlayVideo((prev) => ({ ...prev, isOpenSetting: false, isOpenQuality: false }));
       } else {
-        await document.exitFullscreen();
+        await document.exitFullscreen()
       }
     },
     // // next
     // onNextVideo: handleNextVideo,
     // onPrevVideo: handlePrevVideo,
   }
-    console.log('play', !isPlay , hideMouseRef.current);
-  // console.log(isMouse);
-  useEffect(() =>{
-    let time:any;
-    if (isPlay) {
-      time = setTimeout(() =>{
-        if (isMouse) setStatePlayVideo((prev) => ({ ...prev, isMouse: false }));
-      }, 2500)
-    } else {
-      if (!isMouse) setStatePlayVideo((prev) => ({ ...prev, isMouse: true }));
-    }
-    return () => time && clearTimeout(time)
-  }, [isPlay])
-  console.log(isMouse);
-  
-  // useEffect(() =>{
-  //   let mouseRef = hideMouseRef.current;
-  //   // ${isMouse ? 'cursor-default' : 'cursor-none'}
-  //   const handleMouseMove = () => {
-  //     setStatePlayVideo((prev) => ({ ...prev, isMouse: false }));
-  //     console.log(isMouse && isPlay && mouseRef);
-      
-  //   };
-    
-  //   if (isMouse && isPlay && mouseRef) {
-  //     // alert()
-  //     mouseRef.addEventListener('mousemove', handleMouseMove);
-  //   }
+  // console.log('play', !isPlay , hideMouseRef.current);
   // }, [isPlay, isMouse, hideMouseRef])
-    useEffect(() => {
-    let mouseRef = hideMouseRef.current;
-    let time: any
-    const handleMouseMove = () => {
-      if (!statePlayVideo.isMouse) setStatePlayVideo((prev) => ({ ...prev, isMouse: true }));
-        mouseRef.style.cursor = 'default';
-        time= setTimeout(() => {
-          mouseRef.style.cursor = 'none';
-          if (statePlayVideo.isMouse) setStatePlayVideo((prev) => ({ ...prev, isMouse: false }));
-        }, 2500);
-    };
-    if (mouseRef) mouseRef.addEventListener('mousemove', handleMouseMove);
+  // const handleHideController = (event) => {
+  //     if (event.type === 'mousedown' && (video.paused || isMobile)) return
+  //     controllerWrapper.classList.remove("hide")
+  //     videoWrapper.classList.remove("cursor_none")
+  //     if (isLive) window.viewCount.classList.add("hide")
+  //     if (document.fullscreenElement || document.webkitFullScreenElement) titleWrapper.classList.remove("hide")
+
+  //     clearTimeout(timeoutController)
+  //     timeoutController = setTimeout(() => {
+  //         controllerWrapper.classList.add("hide")
+  //         divSwitchTrack.classList.add("hide")
+  //         divSwitchQuality.classList.add("hide")
+  //         videoWrapper.classList.add("cursor_none")
+  //         if (isLive) window.viewCount.classList.remove("hide")
+  //         if (document.fullscreenElement || document.webkitFullscreenElement) titleWrapper.classList.add("hide")
+  //     }, 3000)
+  // }
+  useEffect(() => {
+    const wrapperVideo = document.querySelector("#wrapperVideo")
+    const wrapperControl = document.querySelector("#wrapperControl")
+    const btnPlay = document.querySelector("#btnPlay")
+    if (!isPlay) {
+      wrapperVideo?.classList.remove("cursor-none")
+      wrapperControl?.classList.remove("hidden")
+      btnPlay?.classList.remove("hidden")
+    }
+    const handleHideController = () => {
+      if (refTimeOut.current) clearTimeout(refTimeOut.current)
+      wrapperVideo?.classList.remove("cursor-none")
+      wrapperControl?.classList.remove("hidden")
+      refTimeOut.current = setTimeout(() => {
+        wrapperVideo?.classList.add("cursor-none")
+        wrapperControl?.classList.add("hidden")
+        btnPlay?.classList.add("hidden")
+      }, 2500)
+    }
+    if (wrapperVideo && wrapperControl) {
+      wrapperVideo.addEventListener("mousemove", handleHideController)
+    }
     return () => {
-      if (mouseRef) mouseRef.removeEventListener('mousemove', handleMouseMove);
-      time && clearTimeout(time)
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ hideMouseRef, isPlay]);
+      if (wrapperVideo) wrapperVideo.removeEventListener("mousemove", handleHideController)
+    }
+  }, [isPlay])
   if (!detail)
     return (
       <div className='min-h-screen'>
@@ -307,7 +295,7 @@ const Details = ({ slug }: { slug: string }) => {
                 allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
               />
             ) : (
-              <section className={`relative group transition-all ${isMouse ? 'cursor-default' : 'cursor-none'}`} onClick={handleTogglePlayVideo} ref={hideMouseRef}>
+              <section className='relative' onClick={handleTogglePlayVideo} id='wrapperVideo'>
                 <ReactPlayer
                   onProgress={(e) => {
                     setCurrentSeconds(Math.floor(e.playedSeconds))
@@ -320,17 +308,15 @@ const Details = ({ slug }: { slug: string }) => {
                   height={"100%"}
                   className='w-full bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'
                 />
-                {!unmounted && (
-                  <>
-                    {isPlay ? (
-                      <Button icon={<FaCirclePause size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
-                    ) : (
-                      <Button icon={<FaCirclePlay size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
-                    )}
-                  </>
-                )}
+                <div id='btnPlay'>
+                  {isPlay ? (
+                    <Button icon={<FaCirclePause size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
+                  ) : (
+                    <Button icon={<FaCirclePlay size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
+                  )}
+                </div>
                 {/* opacity-0 group-hover:opacity-100 duration-200 */}
-                <div className='relative opacity-0 group-hover:opacity-100 duration-200'>
+                <div className='relative' id='wrapperControl'>
                   <VideoControl {...optionVideoControls} />
                 </div>
               </section>
