@@ -1,5 +1,5 @@
 "use client"
-import { ReactNode, useCallback, useEffect, useRef, useState, useTransition } from "react"
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react"
 import { useApp } from "@/context/ContextProvider"
 import DetailsBanner from "@/layout/DetailsBanner"
 import { usePathname, useSearchParams } from "next/navigation"
@@ -8,7 +8,7 @@ import { v4 as uuid } from "uuid"
 import { Autoplay } from "@/utils/moduleSwiper"
 import ReactPlayer from "react-player"
 import Button from "@/components/Button"
-import { FaCirclePlay, FaCirclePause } from "../utils/icons"
+import { FaCirclePlay, FaCirclePause, AiOutlineLoading3Quarters } from "../utils/icons"
 import Loading from "@/components/Loading"
 import { popup, typeToast } from "@/utils/constants"
 import TitlePath from "@/components/TitlePath"
@@ -22,6 +22,7 @@ import { clearDataCategory, storeState } from "@/store/storeApi"
 import useResize from "./hook/useResize"
 import VideoControl from "./Video/VideoControl"
 import { togglePlayVideo } from "@/store/storeAction"
+import Image from "next/image"
 enum numberPage {
   zero,
   one,
@@ -46,18 +47,23 @@ const Details = ({ slug }: { slug: string }) => {
   const refSwiper = useRef<any>(null)
   const refTimeOut = useRef<NodeJS.Timeout | null>(null)
   const [statePlayVideo, setStatePlayVideo] = useState({
-    isPlay: false,
-    isShowIcon: false,
-    defaultIsPlay: false,
-    isMouse: true,
+    // isPlay: false,
+    // isShowIcon: false,
+    defaultIsPlay: true,
+    // isMouse: true,
     isLoadingVideo: false,
-    quality: localStorage.getItem("quality") || "720p", // tao localStorage
-    isOpenQuality: false,
-    isOpenSetting: false,
+    // quality: localStorage.getItem("quality") || "720p", // tao localStorage
+    // isOpenQuality: false,
+    // isOpenSetting: false,
     percentSecondsLoaded: 0,
-    isOpenDrawer: false,
+    // isOpenDrawer: false,
   })
-  const { isMouse } = statePlayVideo
+  const [stateScreenMode, setStateScreenMode] = useState({
+    isTheaterMode: false,
+    isMiniPlayer: false,
+  })
+  const { percentSecondsLoaded, defaultIsPlay } = statePlayVideo
+  const { isMiniPlayer, isTheaterMode } = stateScreenMode
   // const {
   //   user,
   //   isAuthenticated,
@@ -76,13 +82,26 @@ const Details = ({ slug }: { slug: string }) => {
   const { isPlay } = useSelector((state: RootState) => state.storeAction)
   const dispatch = useDispatch()
   const { device } = useResize()
+  const defaultPosterVideo = useMemo(() => {
+    if (!detail) return ""
+    return detail.movie.poster_url
+  }, [detail])
   console.log(detail)
   console.log(linkPlay)
+  console.log(defaultPosterVideo)
 
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
     return () => dispatch(clearDataCategory(null) as any)
   }, [slug])
+  useEffect(() => {
+    if (refPlayer.current) {
+      const seconds = refPlayer.current.getSecondsLoaded()
+      const duration = refPlayer.current.getDuration()
+      const ratio = Math.min(Math.floor((seconds / duration) * 100), 100)
+      setStatePlayVideo((prev) => ({ ...prev, percentSecondsLoaded: ratio }))
+    }
+  }, [refPlayer, currentSeconds])
   useEffect(() => {
     let time: any
     if (detail) {
@@ -125,82 +144,54 @@ const Details = ({ slug }: { slug: string }) => {
     }
   }
   const handleTogglePlayVideo = () => dispatch(togglePlayVideo(!isPlay))
+  const handleToggleMiniMap = () => setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: !prev.isMiniPlayer }))
+  // const handleGetDuration = (e:) =>
+  useEffect(() => {
+    let video: any
+    if (linkPlay) {
+      video = document.createElement("video") as HTMLVideoElement
+      video.src = linkPlay
+      video.addEventListener("loadeddata", (e: any) => {
+        console.log(e)
+      })
+    }
+  }, [linkPlay])
   const optionVideoControls = {
     isPlay: isPlay,
-    // isAutoPlay: isAutoPlay,
-    // secondsLoaded: percentSecondsLoaded || 0,
-    currentSeconds: currentSeconds,
     volume: volume,
-    // themeApp: themeApp,
-    // theme: theme,
-    // menuQuality: () => {
-    //   if (dataVideo?.streaming?.mp4) {
-    //     const menu = Object.keys(dataVideo.streaming.mp4);
-    //     if (menu.length === 4) {
-    //       menu.pop();
-    //       return menu;
-    //     }
-    //     return menu;
-    //   }
-    //   return [];
-    // },
-    // quality: quality,
-    // isOpenQuality: isOpenQuality,
-    // isOpenSetting: isOpenSetting,
+    currentSeconds: currentSeconds,
+    secondsLoaded: percentSecondsLoaded || 0,
     maxDuration: refPlayer.current?.getDuration(),
     slots: formatDuration(currentSeconds),
-    // changeCurrentTime: formatDuration(Number(Math.floor(videoRef.current?.getDuration())) - Number(currentSeconds)),
-    // onOpenQuality: (openSetting, openQuality, hiddenQuality) => {
-    //   if (openSetting) setStatePlayVideo((prev) => ({ ...prev, isOpenSetting: !prev.isOpenSetting, isOpenQuality: false }));
-    //   if (openQuality) setStatePlayVideo((prev) => ({ ...prev, isOpenQuality: !prev.isOpenQuality }));
-    //   if (hiddenQuality) setStatePlayVideo((prev) => ({ ...prev, isOpenQuality: false, isOpenSetting: true }));
-    // },
-    // onChangeCommitted: (_, value) => videoRef.current.seekTo(value),
+    changeCurrentTime: formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds)),
+    onChangeCommitted: (_: any, value: any) => refPlayer.current.seekTo(value),
     onTogglePlayVideo: handleTogglePlayVideo,
-    // onChange: (_, value) => setCurrentSeconds(value),
+    onChange: (_: any, value: number) => setCurrentSeconds(Math.floor(value)),
     onChangeVolume: (_e: any, value: number) => setVolume(value),
     setChangeVolume: (number: number) => setVolume(number),
-    // onChangeAutoPlay: () => setIsAutoplay(!isAutoPlay),
-    // onChangeQuality: handleChangeQuality,
-    // // screen
-    // onChangeTheaterMode: async () => {
-    //   setStateScreenMode((prev) => ({ ...prev, isTheaterMode: !prev.isTheaterMode }));
-    //   if (document.fullscreenElement !== null) await document.exitFullscreen();
-    // },
+    onChangeTheaterMode: async () => {
+      setStateScreenMode((prev) => ({ ...prev, isTheaterMode: !prev.isTheaterMode }))
+      if (document.fullscreenElement !== null) await document.exitFullscreen()
+      // scroll center
+      refTimeOut.current = setTimeout(() => {
+        refMovie.current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+      }, 100)
+    },
+    onToggleMiniMap: handleToggleMiniMap,
     onChangeFullScreen: async () => {
       if (!refPlayer.current) return
       if (document.fullscreenElement === null) {
         const wrapperVideo = document.querySelector("#wrapperVideo")
         if (wrapperVideo) await wrapperVideo.requestFullscreen()
-        // await hideMouseRef.current?.requestFullscreen();
-        // if (isLoadingVideo) setStatePlayVideo((prev) => ({ ...prev, isOpenSetting: false, isOpenQuality: false }));
       } else {
         await document.exitFullscreen()
+        // scroll center
+        refTimeOut.current = setTimeout(() => {
+          refMovie.current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+        }, 100)
       }
     },
-    // // next
-    // onNextVideo: handleNextVideo,
-    // onPrevVideo: handlePrevVideo,
   }
-  // console.log('play', !isPlay , hideMouseRef.current);
-  // }, [isPlay, isMouse, hideMouseRef])
-  // const handleHideController = (event) => {
-  //     if (event.type === 'mousedown' && (video.paused || isMobile)) return
-  //     controllerWrapper.classList.remove("hide")
-  //     videoWrapper.classList.remove("cursor_none")
-  //     if (isLive) window.viewCount.classList.add("hide")
-  //     if (document.fullscreenElement || document.webkitFullScreenElement) titleWrapper.classList.remove("hide")
-
-  //     clearTimeout(timeoutController)
-  //     timeoutController = setTimeout(() => {
-  //         controllerWrapper.classList.add("hide")
-  //         divSwitchTrack.classList.add("hide")
-  //         divSwitchQuality.classList.add("hide")
-  //         videoWrapper.classList.add("cursor_none")
-  //         if (isLive) window.viewCount.classList.remove("hide")
-  //         if (document.fullscreenElement || document.webkitFullscreenElement) titleWrapper.classList.add("hide")
-  //     }, 3000)
-  // }
   useEffect(() => {
     const wrapperVideo = document.querySelector("#wrapperVideo")
     const wrapperControl = document.querySelector("#wrapperControl")
@@ -210,6 +201,9 @@ const Details = ({ slug }: { slug: string }) => {
       wrapperControl?.classList.remove("hidden")
       btnPlay?.classList.remove("hidden")
     }
+    // default anh khi chua play video
+    if (isPlay && defaultIsPlay) setStatePlayVideo((prev) => ({ ...prev, defaultIsPlay: false }))
+    // handle hide mouse
     const handleHideController = () => {
       if (refTimeOut.current) clearTimeout(refTimeOut.current)
       wrapperVideo?.classList.remove("cursor-none")
@@ -253,8 +247,9 @@ const Details = ({ slug }: { slug: string }) => {
       <DetailsBanner data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
       {/* popup={popup} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === dataDetailMovie.id)} onToggleMovie={() => onToggleMovie(dataDetailMovie)} */}
       <div className='bg-overlay py-14'>
-        <div className='container'>
-          <h3 className='text-base font-bold mb-4'>Vietsub #1</h3>
+        <div className={`${isTheaterMode ? "" : "container"}`}>
+          {/* isTheaterMode */}
+          <h3 className={`text-base font-bold mb-4 ${isTheaterMode ? "container" : ""}`}>Vietsub #1</h3>
           <div className={`grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-12 text-center gap-2`}>
             {/* {fillEpisodes.map((_it: any, index: number, arr: any) => {
               // const callDisableEpisode = !disableEpisode(index)
@@ -279,7 +274,8 @@ const Details = ({ slug }: { slug: string }) => {
           {/* https://vip.opstream17.com/share/6f2688a5fce7d48c8d19762b88c32c3b  => nhung iframe*/}
           {/* https://player.phimapi.com/player/?url=https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8 cat chuoi lay link  https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8*/}
           {/* src="https://embed1.streamc.xyz/embed.php?hash=e468c46004c5947e5d95389ead25846d" link anime bi loi */}
-          <div className='max-w-5xl mx-auto mt-16' ref={refMovie}>
+          {/* isTheaterMode */}
+          <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie}>
             {isLoadingVideo ? (
               <div className='animate-pulse bg-white/5  w-full aspect-video overflow-hidden bg-stone-900 rounded-md relative'>
                 <Loading hFull={true} />
@@ -297,22 +293,38 @@ const Details = ({ slug }: { slug: string }) => {
             ) : (
               <section className='relative' onClick={handleTogglePlayVideo} id='wrapperVideo'>
                 <ReactPlayer
-                  onProgress={(e) => {
-                    setCurrentSeconds(Math.floor(e.playedSeconds))
-                  }}
                   ref={refPlayer}
                   controls={false}
+                  pip={isMiniPlayer}
                   url={linkPlay}
+                  volume={volume / 100}
                   playing={isPlay}
+                  light={defaultIsPlay ? <Image alt='' className='rounded-md object-contain' layout='fill' src={defaultPosterVideo} /> : ""}
                   width={"100%"}
                   height={"100%"}
-                  className='w-full bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'
+                  className=' bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'
+                  onProgress={(e) => setCurrentSeconds(Math.floor(e.playedSeconds))}
+                  onBuffer={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: true }))}
+                  onBufferEnd={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: false }))}
+                  onEnablePIP={() => {
+                    setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: true }))
+                    setStatePlayVideo((prev) => ({ ...prev, isPlay: true }))
+                  }}
+                  onDisablePIP={() => {
+                    setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: false }))
+                    setStatePlayVideo((prev) => ({ ...prev, isPlay: false }))
+                  }}
                 />
+                {isLoadingVideo && (
+                  <span className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2'>
+                    <AiOutlineLoading3Quarters className='animate-spin' size={35} />
+                  </span>
+                )}
                 <div id='btnPlay'>
                   {isPlay ? (
                     <Button icon={<FaCirclePause size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
                   ) : (
-                    <Button icon={<FaCirclePlay size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
+                    <Button icon={<FaCirclePlay size={50} />} className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 ${defaultIsPlay && "text-black"}`} />
                   )}
                 </div>
                 {/* opacity-0 group-hover:opacity-100 duration-200 */}
@@ -321,32 +333,6 @@ const Details = ({ slug }: { slug: string }) => {
                 </div>
               </section>
             )}
-            {/* 
-               <VideoPlayer
-                ref={videoRef}
-                onPlay={() => setStatePlayVideo((prev) => ({ ...prev, isShowIcon: false, defaultIsPlay: true }))}
-                onPause={() => setStatePlayVideo((prev) => ({ ...prev, isShowIcon: true }))}
-                onProgress={(e) => {
-                  setCurrentSeconds(Math.floor(e.playedSeconds));
-                }}
-                onStart={() => onAddHistoryMv(dataVideo)}
-                onBuffer={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: true }))}
-                onBufferEnd={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: false }))}
-                sourceVideo={sourceVideo}
-                isPlay={isPlay}
-                volume={volume / 100}
-                pip={isMiniPlayer}
-                light={!defaultIsPlay ? dataVideo?.thumbnailM : null}
-                onEnded={handleEndedVideo}
-                onEnablePIP={() => {
-                  setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: true }));
-                  setStatePlayVideo((prev) => ({ ...prev, isPlay: true }));
-                }}
-                onDisablePIP={() => {
-                  setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: false }));
-                  setStatePlayVideo((prev) => ({ ...prev, isPlay: false }));
-                }}
-              /> */}
           </div>
         </div>
       </div>
@@ -395,7 +381,8 @@ const Details = ({ slug }: { slug: string }) => {
           }}
           modules={[Autoplay]}>
           {dataRelated.map((movie: any) => (
-            <SwiperSlide key={movie?.movie_id} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <SwiperSlide key={movie?.movie_id}>
+              {/* // onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} */}
               <CardProduct
                 device={device}
                 data={movie}

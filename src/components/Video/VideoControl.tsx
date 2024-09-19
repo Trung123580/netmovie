@@ -6,30 +6,7 @@ import classNames from "classnames/bind"
 import ControlsRight from "./ControlsRight"
 import Button from "../Button"
 const VideoControl = (props: any) => {
-  const {
-    isPlay,
-    currentSeconds,
-    maxDuration,
-    onChangeCommitted,
-    onChange,
-    slots,
-    onTogglePlayVideo,
-    secondsLoaded,
-    volume,
-    onChangeVolume,
-    themeApp,
-    theme,
-    changeCurrentTime,
-    setChangeVolume,
-    onNextVideo,
-    onPrevVideo,
-    //onChangeAutoPlay, => dùng ở controlsRight
-    //isOpenQuality, => dùng ở controlsRight
-    //isOpenSetting, => dùng ở controlsRight
-    //onOpenQuality, => dùng ở controlsRight
-    //isAutoPlay, => dùng ở controlsRight
-    //quality, => dùng ở controlsRight
-  } = props
+  const { isPlay, currentSeconds, maxDuration, onChangeCommitted, onChange, slots, onTogglePlayVideo, secondsLoaded, volume, onChangeVolume, changeCurrentTime, setChangeVolume } = props
   return (
     <div
       // className={cx('video-progress', {
@@ -52,7 +29,6 @@ const VideoControl = (props: any) => {
             valueLabel: slots,
           }}
           sx={{
-            // color: '#fff',
             color: "rgb(228, 216, 4)",
             height: 4,
             "&:hover": {
@@ -85,7 +61,7 @@ const VideoControl = (props: any) => {
                 top: 0,
                 left: 0,
                 background: "rgb(184, 184, 184)",
-                width: `${30}%`, //secondsLoaded // thoi gian load dx video
+                width: `${secondsLoaded}%`, //secondsLoaded // thoi gian load dx video
                 height: "100%",
                 position: "absolute",
                 zIndex: "-1", // Để đặt lớp ::after phía dưới slider
@@ -94,7 +70,7 @@ const VideoControl = (props: any) => {
           }}
         />
       </div>
-      <div className='flex absolute bottom-0 w-full h-[calc(100%_-_16px)] justify-between px-3' onClick={(e) => e.stopPropagation()}>
+      <div className='flex absolute bottom-0 w-full h-[calc(100%_-_24px)] justify-between px-3' onClick={(e) => e.stopPropagation()}>
         <div className='flex items-center justify-center group'>
           {/* <span onClick={onPrevVideo}><SkipPreviousRoundedIcon /></span> */}
           <Button
@@ -145,7 +121,7 @@ const VideoControl = (props: any) => {
                       boxShadow: "0 2px 8px 0 rgba(0,0,0,0.4)",
                     },
                     "&:hover, &.Mui-focusVisible": {
-                      boxShadow: `0px 0px 0px 4px ${theme?.palette.mode === "dark" ? "rgb(255 255 255 / 16%)" : "rgb(0 0 0 / 16%)"}`,
+                      boxShadow: `0px 0px 0px 4px "rgb(255 255 255 / 16%)"`,
                     },
                     "&.Mui-active": {
                       width: 10,
