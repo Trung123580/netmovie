@@ -35,6 +35,7 @@ const Details = ({ slug }: { slug: string }) => {
   const router = useRouter()
   const [dataRelated, setDataRelated] = useState<any>([])
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false)
+  const [defaultDuration, setDefaultDuration] = useState(0)
   const [dataVideo, setDataVideo] = useState<dataVideo>({
     linkPlay: "",
     type: "",
@@ -89,7 +90,6 @@ const Details = ({ slug }: { slug: string }) => {
   console.log(detail)
   console.log(linkPlay)
   console.log(defaultPosterVideo)
-
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
     return () => dispatch(clearDataCategory(null) as any)
@@ -145,17 +145,8 @@ const Details = ({ slug }: { slug: string }) => {
   }
   const handleTogglePlayVideo = () => dispatch(togglePlayVideo(!isPlay))
   const handleToggleMiniMap = () => setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: !prev.isMiniPlayer }))
-  // const handleGetDuration = (e:) =>
-  useEffect(() => {
-    let video: any
-    if (linkPlay) {
-      video = document.createElement("video") as HTMLVideoElement
-      video.src = linkPlay
-      video.addEventListener("loadeddata", (e: any) => {
-        console.log(e)
-      })
-    }
-  }, [linkPlay])
+  const durationCurrent = formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds))
+  const durationVideo = durationCurrent === '0:00' ? formatDuration(defaultDuration) : durationCurrent 
   const optionVideoControls = {
     isPlay: isPlay,
     volume: volume,
@@ -163,7 +154,7 @@ const Details = ({ slug }: { slug: string }) => {
     secondsLoaded: percentSecondsLoaded || 0,
     maxDuration: refPlayer.current?.getDuration(),
     slots: formatDuration(currentSeconds),
-    changeCurrentTime: formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds)),
+    changeCurrentTime: durationVideo,
     onChangeCommitted: (_: any, value: any) => refPlayer.current.seekTo(value),
     onTogglePlayVideo: handleTogglePlayVideo,
     onChange: (_: any, value: number) => setCurrentSeconds(Math.floor(value)),
@@ -244,7 +235,9 @@ const Details = ({ slug }: { slug: string }) => {
     )
   return (
     <>
+      <ReactPlayer url={linkPlay} className="hidden" onDuration={(e) => setDefaultDuration(Math.floor(e))}/>
       <DetailsBanner data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
+      {/* <video src={linkPlay} id='audio' className='hidden' autoPlay={false} controls={false}></video> */}
       {/* popup={popup} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === dataDetailMovie.id)} onToggleMovie={() => onToggleMovie(dataDetailMovie)} */}
       <div className='bg-overlay py-14'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
@@ -274,7 +267,6 @@ const Details = ({ slug }: { slug: string }) => {
           {/* https://vip.opstream17.com/share/6f2688a5fce7d48c8d19762b88c32c3b  => nhung iframe*/}
           {/* https://player.phimapi.com/player/?url=https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8 cat chuoi lay link  https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8*/}
           {/* src="https://embed1.streamc.xyz/embed.php?hash=e468c46004c5947e5d95389ead25846d" link anime bi loi */}
-          {/* isTheaterMode */}
           <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie}>
             {isLoadingVideo ? (
               <div className='animate-pulse bg-white/5  w-full aspect-video overflow-hidden bg-stone-900 rounded-md relative'>
@@ -327,7 +319,6 @@ const Details = ({ slug }: { slug: string }) => {
                     <Button icon={<FaCirclePlay size={50} />} className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 ${defaultIsPlay && "text-black"}`} />
                   )}
                 </div>
-                {/* opacity-0 group-hover:opacity-100 duration-200 */}
                 <div className='relative' id='wrapperControl'>
                   <VideoControl {...optionVideoControls} />
                 </div>

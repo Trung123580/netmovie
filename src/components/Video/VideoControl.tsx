@@ -1,22 +1,15 @@
-// import SkipPreviousRoundedIcon from '@mui/icons-material/SkipPreviousRounded';
-// import SkipNextRoundedIcon from '@mui/icons-material/SkipNextRounded';
 import Slider from "@mui/material/Slider"
 import { LuVolume2, LuVolumeX, LuVolume1, IoPlay, IoPause } from "../../utils/icons"
-import classNames from "classnames/bind"
 import ControlsRight from "./ControlsRight"
 import Button from "../Button"
 const VideoControl = (props: any) => {
   const { isPlay, currentSeconds, maxDuration, onChangeCommitted, onChange, slots, onTogglePlayVideo, secondsLoaded, volume, onChangeVolume, changeCurrentTime, setChangeVolume } = props
   return (
     <div
-      // className={cx('video-progress', {
-      //   paused: !isPlay,
-      // })}
-      className='absolute bottom-0 w-full h-16 px-1'
+      className='absolute bottom-0 w-full h-16 px-1 bg-blur/25'
       onClick={(e) => e.stopPropagation()}>
       <div>
         <Slider
-          // className={cx('progress-bar')}
           aria-label='time-indicator'
           size='small'
           value={currentSeconds}
@@ -72,19 +65,11 @@ const VideoControl = (props: any) => {
       </div>
       <div className='flex absolute bottom-0 w-full h-[calc(100%_-_24px)] justify-between px-3' onClick={(e) => e.stopPropagation()}>
         <div className='flex items-center justify-center group'>
-          {/* <span onClick={onPrevVideo}><SkipPreviousRoundedIcon /></span> */}
           <Button
-            // className={cx('icon', {
-            //   sizeLg: true,
-            // })}
             icon={isPlay ? <IoPause size={25} /> : <IoPlay size={25} />}
             onClick={onTogglePlayVideo}
           />
-          {/* <span onClick={onNextVideo}><SkipNextRoundedIcon /></span> */}
           <div
-            // className={cx('icon', {
-            // volume: true,
-            // })}</div>
             className='cursor-pointer ml-[5px] p-[5px] relative z-10 flex items-center justify-center'>
             {volume >= 60 ? (
               <LuVolume2 size={20} onClick={() => setChangeVolume(0)} />

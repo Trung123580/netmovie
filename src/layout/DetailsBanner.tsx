@@ -89,8 +89,12 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
               />
             </div>
           </div>
-          <button>xem phim</button>
-          {/* scroll den xem phim */}
+          <Button
+            content='Xem Phim'
+            onClick={() => onShowPopup(popup.trailerPopup, getIdVideo(data.trailer_url))}
+            disabled={false}
+            className='border border-white/5 bg-white/5 py-2 border-primary flex justify-around items-center w-full lg:w-max rounded-lg mt-4 gap-1.5 md:gap-5 md:px-7'
+          />
         </div>
       </div>
     </div>
