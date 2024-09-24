@@ -1,10 +1,9 @@
 "use client"
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react"
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react"
 import { useApp } from "@/context/ContextProvider"
 import DetailsBanner from "@/layout/DetailsBanner"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Swiper, SwiperSlide } from "swiper/react"
-import { v4 as uuid } from "uuid"
 import { Autoplay } from "@/utils/moduleSwiper"
 import ReactPlayer from "react-player"
 import Button from "@/components/Button"
@@ -23,6 +22,7 @@ import useResize from "./hook/useResize"
 import VideoControl from "./Video/VideoControl"
 import { togglePlayVideo } from "@/store/storeAction"
 import Image from "next/image"
+import {v4 as uuid} from 'uuid'
 enum numberPage {
   zero,
   one,
@@ -33,9 +33,9 @@ enum numberPage {
 const date = new Date()
 const Details = ({ slug }: { slug: string }) => {
   const router = useRouter()
-  const [dataRelated, setDataRelated] = useState<any>([])
   const [isLoadingVideo, setIsLoadingVideo] = useState<boolean>(false)
   const [defaultDuration, setDefaultDuration] = useState(0)
+  const [episodesList, setEpisodesList] = useState<any>([])
   const [dataVideo, setDataVideo] = useState<dataVideo>({
     linkPlay: "",
     type: "",
@@ -76,8 +76,10 @@ const Details = ({ slug }: { slug: string }) => {
   }: AuthContextType = useApp()
   const searchParams = useSearchParams()
   const pathName = usePathname()
-  const searchPractice: number | null = Number(searchParams.get("tap") ?? numberPage.one)
+  const searchPractice: string = searchParams.get("tap") as string
+  const searchServerName: number = Number(searchParams.get("server"))
   const {
+    isLoading,
     data: { detail, relate },
   }: storeState = useSelector((state: RootState) => state.storeApp)
   const { isPlay } = useSelector((state: RootState) => state.storeAction)
@@ -87,9 +89,25 @@ const Details = ({ slug }: { slug: string }) => {
     if (!detail) return ""
     return detail.movie.poster_url
   }, [detail])
+  
+  const getSVNumber = (serverName : string) => {
+    const match = serverName.match(/SV\s?#(\d+)/); // Lấy số từ "SV #1", "SV #2", ...
+    return match ? parseInt(match[1], 10) : Infinity; // Nếu không tìm thấy, trả về Infinity (để xếp cuối)
+  };
   console.log(detail)
-  console.log(linkPlay)
-  console.log(defaultPosterVideo)
+  console.log(searchServerName)
+  console.log(searchPractice);
+  console.log(episodesList)
+  // useEffect(() =>{
+  //   if (!episodesList.length) return 
+  //   if (searchServerName && searchPractice){
+  //     const findServer = episodesList.find(({server_name}: ServerData) =>  server_name === searchServerName)
+  //     // const episode = findServer.episodes.find(({slug}: itemServerData) => slug === String(searchPractice)) 
+  //     // console.log(findServer, episode);
+  //     console.log(findServer);
+  //   }
+  // },[episodesList, searchServerName, searchPractice])
+
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
     return () => dispatch(clearDataCategory(null) as any)
@@ -103,7 +121,7 @@ const Details = ({ slug }: { slug: string }) => {
     }
   }, [refPlayer, currentSeconds])
   useEffect(() => {
-    let time: any
+    let time: NodeJS.Timeout
     if (detail) {
       setIsLoadingVideo(false)
       if (detail.episodes.length === 0) {
@@ -112,18 +130,41 @@ const Details = ({ slug }: { slug: string }) => {
         }, 5000)
         return
       }
-      const defaultLink = (detail.episodes[0]?.server_data[0].link_embed as string) ?? ""
-      const checkLink = convertLinkPlayer({ link: defaultLink })
-      if (checkLink.type === "video") {
-        setDataVideo({ linkPlay: checkLink.linkPlay, type: "video" })
+      const convertSort = [...detail.episodes].sort((a:any, b:any) => {
+        const svNumberA = getSVNumber(a.server_name);
+        const svNumberB = getSVNumber(b.server_name);
+        return svNumberA - svNumberB;
+      })
+      if (searchServerName && searchPractice){
+        const findServer = convertSort[searchServerName - 1].server_data.filter((item:any) => item.name !== 'undefined')
+        const episode = findServer.find(({slug}: itemServerData) => slug === String(searchPractice)) 
+        // check tim duoc tap ko
+        if (!episode) router.back();
+        const checkLink = convertLinkPlayer({ link: episode.link_embed })
+        if (checkLink.type === "video") {
+          setDataVideo({ linkPlay: checkLink.linkPlay, type: "video" })
+        } else {
+          setDataVideo({ linkPlay: checkLink.linkPlay, type: "iframe" })
+        }
+        document.getElementById('wrapperVideo')?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
       } else {
-        setDataVideo({ linkPlay: checkLink.linkPlay, type: "iframe" })
+        const defaultLink = (convertSort[0]?.server_data.filter((item:any) => item.name !== 'undefined')[0].link_embed as string) ?? ""
+        const checkLink = convertLinkPlayer({ link: defaultLink })
+        if (checkLink.type === "video") {
+          setDataVideo({ linkPlay: checkLink.linkPlay, type: "video" })
+        } else {
+          setDataVideo({ linkPlay: checkLink.linkPlay, type: "iframe" })
+        }
       }
-      dispatch(getMoviesRelate({ country: detail.movie.country[0]?.slug, status: detail.movie.status }) as any)
+      setEpisodesList(convertSort)
+      dispatch(getMoviesRelate({ country: detail.movie.country[0].slug, status: detail.movie.status }) as any)
     }
     return () => time && clearTimeout(time)
-  }, [detail])
+  }, [detail,searchServerName, searchPractice])
   console.log(relate)
+  const handleChangeEpisode = (indexServer: number, episode:string) =>{
+    router.push(pathName + '?' + `server=${indexServer}` + '&' + `tap=${episode}`)
+  }
   const handleNext = useCallback(() => {
     if (refSwiper.current) refSwiper.current?.swiper.slidePrev()
   }, [refSwiper.current])
@@ -132,17 +173,6 @@ const Details = ({ slug }: { slug: string }) => {
     if (refSwiper?.current) refSwiper.current?.swiper.slideNext()
   }, [refSwiper.current])
 
-  const handleMouseEnter = () => {
-    if (refSwiper.current && refSwiper.current.swiper) {
-      refSwiper.current.swiper.autoplay.stop()
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (refSwiper.current && refSwiper.current.swiper) {
-      refSwiper.current.swiper.autoplay.start()
-    }
-  }
   const handleTogglePlayVideo = () => dispatch(togglePlayVideo(!isPlay))
   const handleToggleMiniMap = () => setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: !prev.isMiniPlayer }))
   const durationCurrent = formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds))
@@ -212,7 +242,14 @@ const Details = ({ slug }: { slug: string }) => {
       if (wrapperVideo) wrapperVideo.removeEventListener("mousemove", handleHideController)
     }
   }, [isPlay])
-  if (!detail)
+  if (isLoading){
+    return (
+      <div className='min-h-screen'>
+        <Loading />
+      </div>
+    )
+  }
+  if (!detail && !relate?.items?.length)
     return (
       <div className='min-h-screen'>
         <Loading />
@@ -220,7 +257,7 @@ const Details = ({ slug }: { slug: string }) => {
     )
   if (!detail.episodes.length)
     return (
-      <div className='bg-overlay py-14 min-h-screen'>
+      <div className='bg-overlay md:py-14 min-h-screen'>
         <div className='container'>
           <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
             <div className='h-[200px] border px-7 py-4 rounded-md border-primary'>
@@ -239,35 +276,39 @@ const Details = ({ slug }: { slug: string }) => {
       <DetailsBanner data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
       {/* <video src={linkPlay} id='audio' className='hidden' autoPlay={false} controls={false}></video> */}
       {/* popup={popup} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === dataDetailMovie.id)} onToggleMovie={() => onToggleMovie(dataDetailMovie)} */}
-      <div className='bg-overlay py-14'>
+      <div className='bg-overlay md:py-14'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
-          {/* isTheaterMode */}
-          <h3 className={`text-base font-bold mb-4 ${isTheaterMode ? "container" : ""}`}>Vietsub #1</h3>
-          <div className={`grid grid-cols-3 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-12 text-center gap-2`}>
-            {/* {fillEpisodes.map((_it: any, index: number, arr: any) => {
-              // const callDisableEpisode = !disableEpisode(index)
-              return (
-                <Button
-                  key={uuid()}
-                  onClick={() => {
-                    // if (callDisableEpisode) {
-                    //   onShowToast("vui lòng mua gói để xem tập tiếp theo", typeToast.error)
-                    //   onShowPopup(popup.packages)
-                    //   return
-                    // }
-                    setIsLoadingVideo(true)
-                    router.push(`${pathName}?tap=${index + numberPage.one}`)
-                  }}
-                  content={arr.length === 1 ? "Full" : index + 1}
-                  // className={`${Number(searchPractice) === index + 1 ? "!bg-primary text-black" : ""} bg-white/5 rounded hover:bg-primary ${callDisableEpisode ? "hover:bg-white/5 hover:text-white lock" : ""}  duration-200 py-1 hover:text-black`}
-                />
-              )
-            })} */}
-          </div>
+          {episodesList.map(({server_data, server_name} : ServerData, index: number) => {
+            return (
+              <div key={server_name}>
+                <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>{server_name}</h3>
+                <Swiper
+                  className="cursor-pointer wrapper-episodes my-4"
+                  breakpoints={{}}
+                  spaceBetween={20}
+                  loop={true}
+                  keyboard={true}
+                  rewind={true}
+                  noSwiping={true}
+                  slidesPerView={"auto"}
+                  modules={[]}>
+                  {server_data?.map(({name, slug}) => {
+                  const convertEpisodes = name.startsWith('0') ? name.substring(1, name.length) : name
+                  if (name === 'undefined') return <React.Fragment key={uuid()}></React.Fragment>
+                  return (
+                      <SwiperSlide key={uuid()}>
+                        <Button onClick={()=> handleChangeEpisode(index + 1, slug)} className="border inline-block w-full h-full border-primary rounded-md py-1" key={uuid()} content={convertEpisodes}/> 
+                      </SwiperSlide>
+                    )
+                  })}
+                </Swiper>
+            </div>
+            )
+          })}
           {/* https://vip.opstream17.com/share/6f2688a5fce7d48c8d19762b88c32c3b  => nhung iframe*/}
           {/* https://player.phimapi.com/player/?url=https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8 cat chuoi lay link  https://s4.phim1280.tv/20240915/x5xmTacI/index.m3u8*/}
           {/* src="https://embed1.streamc.xyz/embed.php?hash=e468c46004c5947e5d95389ead25846d" link anime bi loi */}
-          <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie}>
+          <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie} id='wrapperVideo'>
             {isLoadingVideo ? (
               <div className='animate-pulse bg-white/5  w-full aspect-video overflow-hidden bg-stone-900 rounded-md relative'>
                 <Loading hFull={true} />
@@ -281,9 +322,11 @@ const Details = ({ slug }: { slug: string }) => {
                 src={linkPlay ?? ""}
                 frameBorder='0'
                 allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                onLoadedData={() => console.log('end')}
+                onLoadStart={() => console.log('start')}
               />
             ) : (
-              <section className='relative' onClick={handleTogglePlayVideo} id='wrapperVideo'>
+              <section className='relative' onClick={handleTogglePlayVideo} >
                 <ReactPlayer
                   ref={refPlayer}
                   controls={false}
@@ -369,10 +412,12 @@ const Details = ({ slug }: { slug: string }) => {
           slidesPerView={4}
           autoplay={{
             delay: 5000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter:true
           }}
           modules={[Autoplay]}>
-          {dataRelated.map((movie: any) => (
-            <SwiperSlide key={movie?.movie_id}>
+          {relate?.items.map((movie: any) => (
+            <SwiperSlide key={movie?._id}>
               {/* // onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} */}
               <CardProduct
                 device={device}

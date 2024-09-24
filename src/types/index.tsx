@@ -105,3 +105,13 @@ type VideoPlayer = {
   onBuffer: () => void
   onBufferEnd: () => void
 }
+type ServerData = {
+  server_data: {
+    filename: string
+    link_embed: string
+    link_m3u8: string
+    name: string
+    slug: string
+  } [],
+  server_name: string
+}

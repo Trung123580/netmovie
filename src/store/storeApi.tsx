@@ -7,7 +7,7 @@ export interface storeState {
     banner: null | any
     category: any[]
     detail: null | any
-    relate: any[]
+    relate: null | any
   }
 }
 
@@ -20,7 +20,7 @@ const initialState: storeState = {
     banner: null,
     category: [],
     detail: null,
-    relate: [],
+    relate: null,
   },
 }
 

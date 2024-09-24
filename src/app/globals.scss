@@ -261,3 +261,25 @@ a {
 .show {
   display: block;
 }
+.wrapper-episodes {
+  .swiper-slide {
+    width: 15% !important;
+  }
+  .swiper-slide:nth-child(2n) {
+    width: 15% !important;
+  }
+  .swiper-slide:nth-child(3n) {
+    width: 15% !important;
+  }
+  @include pc {
+    .swiper-slide {
+      width: 7% !important;
+    }
+    .swiper-slide:nth-child(2n) {
+      width: 7% !important;
+    }
+    .swiper-slide:nth-child(3n) {
+      width: 7% !important;
+    }
+  }  
+}

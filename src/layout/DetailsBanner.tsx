@@ -7,10 +7,9 @@ import Link from "next/link"
 import { getIdVideo } from "@/utils/helpers"
 const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovie }: { data?: any; onShowPopup: any; popup: popup; onToggleMovie?: funcProps; findIsLoveMovie?: boolean }) => {
   return (
-    <div className={`w-full h-screen !bg-cover !bg-no-repeat aspect-video relative !bg-center alpha-blur wrapper-banner `} style={{ background: `url('${data?.poster_url}')` }}>
+    <div className={`w-full h-[1070px] md:h-screen !bg-cover !bg-no-repeat aspect-video relative !bg-center alpha-blur wrapper-banner `} style={{ background: `url('${data?.poster_url}')` }}>
       <div className='h-full w-full absolute top-0 left-0 bg-black/50'></div>
-      <div className='container h-full relative z-20  px-4 flex md:flex-row flex-col gap-8 justify-center items-center '>
-        {/* pt-5 md:pt-24 pb-10 */}
+      <div className='md:pt-0 pt-5 container h-full relative z-20  px-4 flex md:flex-row flex-col gap-8 justify-center items-center w-full '>
         <div className='max-w-[300px] min-w-[300px]'>
           <Image src={data?.thumb_url ?? ""} alt='banner' width={1000} height={1000} className='w-full h-full aspect-[2/3] rounded-lg' />
         </div>
@@ -85,15 +84,17 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
                 content={findIsLoveMovie ? "Bỏ Thích" : "Yêu Thích"}
                 onClick={onToggleMovie}
                 icon={findIsLoveMovie ? <LuHeartCrack size={20} /> : <LuHeart fontSize={20} />}
-                className={`${findIsLoveMovie ? " bg-red text-black border-red hover:bg-red/80" : "bg-black/70 border-primary hover:bg-primary hover:text-black"} text-nowrap flex items-center gap-2 rounded-full border-2 px-5 py-2.5 duration-300`}
+                className={`${findIsLoveMovie ? " bg-red text-black border-red hover:bg-red/80" : "bg-black/70 border-primary hover:bg-primary/20"} text-nowrap flex items-center gap-2 rounded-full border-2 px-5 py-2.5 duration-300`}
               />
             </div>
           </div>
           <Button
             content='Xem Phim'
-            onClick={() => onShowPopup(popup.trailerPopup, getIdVideo(data.trailer_url))}
+            onClick={() => {
+              document.getElementById('wrapperVideo')?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+            }}
             disabled={false}
-            className='border border-white/5 bg-white/5 py-2 border-primary flex justify-around items-center w-full lg:w-max rounded-lg mt-4 gap-1.5 md:gap-5 md:px-7'
+            className='border hover:bg-primary/20 bg-white/5 py-2 border-primary flex justify-around items-center w-full lg:w-max rounded-lg mt-4 gap-1.5 md:gap-5 md:px-7'
           />
         </div>
       </div>
