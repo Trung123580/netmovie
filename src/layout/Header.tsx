@@ -6,18 +6,18 @@ import Nav from "@/components/Nav"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { removeVietnameseTones } from "@/utils/helpers"
-// import { useApp } from '@/context/ContextProvider';
+import { useApp } from '@/context/ContextProvider';
 const Header = () => {
   const [isShowNavBar, setIsShowNavBav] = useState<boolean>(false)
   const [openMenuCategory, setOpenMenuCategory] = useState<string>("")
   const [checkClearCategory, setCheckClearCategory] = useState<string>("")
   const [isMobile, setIsMobile] = useState<boolean>(false)
-  // const {
-  //   user,
-  //   isAuthenticated,
-  //   headerData: { category, regions, typeMovie, topMovies },
-  //   handle: { onShowPopup },
-  // }: any = useApp();
+  const {
+    user,
+    isAuthenticated,
+    // headerData: { category, regions, typeMovie, topMovies },
+    handle: { onShowPopup, onLoginGG, onAppSignOut },
+  }: any = useApp();
   const pathName = usePathname()
   const handleToggleNavbar = () => {
     setIsShowNavBav(!isShowNavBar)
@@ -79,11 +79,13 @@ const Header = () => {
             onToggleOpenMenuCategory={handleToggleMenuCategory}
             isShowNavBar={isShowNavBar}
             openMenuCategory={openMenuCategory}
-            // user={user}
-            // isAuthenticated={isAuthenticated}
+            user={user}
+            isAuthenticated={isAuthenticated}
             convertHeader={navHeader}
             isMobile={isMobile}
-            // onShowPopup={() => onShowPopup(popup.search)}
+            onShowPopup={() => onShowPopup(popup.search)}
+            onLoginGG={onLoginGG}
+            onAppSignOut={onAppSignOut}
           />
         </div>
       </div>

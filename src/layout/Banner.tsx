@@ -60,7 +60,7 @@ const Banner = ({ data }: { data: any }) => {
                   ) : (
                     <Image src={movie?.poster_url} className='w-full h-full object-cover md:h-[70vh] lg:h-screen' alt='' priority width={1000} height={1000} sizes='100vw' />
                   )}
-                  <div className='h-full w-full absolute top-0 left-0 bg-black/50'></div>
+                  <div className='h-full w-full absolute top-0 left-0 bg-black/35'></div>
                   <div className='absolute position-center !top-[80%] !left-[54%]  sm:!left-[52%] md:!left-[54%] md:position-center z-30 w-full flex container  sm:!top-[80%] md:!top-[70%] h-[350px] lg:h-[480px] '>
                     <div className='flex-1 h-max z-20'>
                       <div className='text-white '>

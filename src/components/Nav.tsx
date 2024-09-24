@@ -1,23 +1,24 @@
 "use client"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { IoIosSearch, IoMenu, LuUserSquare } from "@/utils/icons"
 import Image from "next/image"
 import Button from "@/components/Button"
 import { filterNameMovie } from "@/utils/helpers"
-import { v4 as uuid } from "uuid"
 import React from "react"
 const Nav = ({
   onToggleNavbar,
   isShowNavBar,
-  // user,
-  // isAuthenticated,
+  user,
+  isAuthenticated,
   onToggleOpenMenuCategory,
   openMenuCategory,
   convertHeader,
   isMobile,
-}: // onShowPopup,
-navTypes) => {
+  onShowPopup,
+  onLoginGG,
+  onAppSignOut
+}: navTypes) => {
   const pathName = usePathname()
   // const router = useRouter();
   return (
@@ -35,18 +36,16 @@ navTypes) => {
                   onToggleNavbar()
                 }
               }}
-              className={`${isShowNavBar && "text-start flex items-center gap-x-2 "} first-letter:uppercase font-semibold uppercase px-4 text-base text-white lg:px-0 w-full inline-block py-3 hover:text-primary lg:hover:bg-transparent transition ${
-                pathName === path ? "!text-primary lg:text-primary lg:bg-transparent" : ""
-              }`}
+              className={`${isShowNavBar && "text-start flex items-center gap-x-2 "} first-letter:uppercase font-semibold uppercase px-4 text-base text-white lg:px-0 w-full inline-block py-3 hover:text-primary lg:hover:bg-transparent transition ${pathName === path ? "!text-primary lg:text-primary lg:bg-transparent" : ""
+                }`}
               content={name}
               // href={category.length && isShowNavBar ? '' : path}
               icon={isShowNavBar ? <Icon fontSize={23} className='text-primary' /> : ""}
             />
             {!!category.length && (
               <ul
-                className={`${isShowNavBar && `!static !grid-cols-2 !w-full ${openMenuCategory === path ? "!grid" : "!hidden"}`} ${path === "/loai-phim" ? "!grid-cols-2 !-left-[90%]" : ""} ${path === "/top-phim" ? "!py-0" : ""} min-h-[450px] h-[450px] overflow-auto ${
-                  index === 0 ? "!h-auto !min-h-min" : ""
-                } group-hover:grid grid dropdown-menu absolute duration-300 !px-4 grid-cols-2 top-full -left-[180%] z-50 text-sm text-white bg-blur`}>
+                className={`${isShowNavBar && `!static !grid-cols-2 !w-full ${openMenuCategory === path ? "!grid" : "!hidden"}`} ${path === "/loai-phim" ? "!grid-cols-2 !-left-[90%]" : ""} ${path === "/top-phim" ? "!py-0" : ""} min-h-[450px] h-[450px] overflow-auto ${index === 0 ? "!h-auto !min-h-min" : ""
+                  } group-hover:grid grid dropdown-menu absolute duration-300 !px-4 grid-cols-2 top-full -left-[180%] z-50 text-sm text-white bg-blur`}>
                 {category.map((item: any, index: number) => (
                   <li
                     key={item.id}
@@ -55,19 +54,6 @@ navTypes) => {
                       if (isShowNavBar) onToggleNavbar()
                     }}>
                     <Link className={`hover:text-primary  w-full inline-block duration-300 text-base`} prefetch={true} href={path + "/" + item.path}>
-                      {/* 
-                      === '/loai-phim'
-                          ? `/loai-phim/${
-                              index <= 1 ? `/type/${item.type}` : index >= 2 && index <= 4 ? `/language/${item.type}` : `/status/${item.type}`
-                            }`
-                          : path === '/the-loai'
-                          ? `/the-loai/${item.cate_slug}`
-                          : path === '/top-phim' && index === 0
-                          ? '/top-phim/top-phim'
-                          : path === '/top-phim'
-                          ? `#`
-                          : `/quoc-gia/${item.slug}`
-                      */}
                       {item.name || filterNameMovie(item.type)}
                     </Link>
                   </li>
@@ -78,25 +64,11 @@ navTypes) => {
         ))}
       </ul>
       {isShowNavBar && <div className='fixed w-full z-20 h-full bg-blur left-0 calc-width lg:hidden top-0' onClick={onToggleNavbar}></div>}
-      {/* <div className='text-black md:ms-8 md:mr-0 cursor-pointer hover:opacity-90 flex' onClick={onShowPopup}>
+      <div className='text-black md:ms-8 md:mr-0 cursor-pointer hover:opacity-90 flex' onClick={onShowPopup}>
         <abbr title='Tìm kiếm'>
           <IoIosSearch className='w-[34px] h-[30px] text-primary' />
         </abbr>
-      </div> */}
-      {/* {isAuthenticated ? (
-        <Link href={'/thong-tin'} className='text-black cursor-pointer hover:opacity-90 flex '>
-          <abbr title={`${isAuthenticated ? 'thông tin tài khoản' : 'Đăng nhập'}`}>
-            <Image src={user?.photoURL} width={23} height={23} className='rounded min-w-[23px]' alt='user' />
-          </abbr>
-        </Link>
-      ) : (
-        // form show login
-        <Link href={'/thong-tin'} className='text-black cursor-pointer hover:opacity-90 flex '>
-          <abbr title={`${isAuthenticated ? 'thông tin tài khoản' : 'Đăng nhập'}`}>
-            <LuUserSquare className='w-[32px] h-[28px]  text-primary' />
-          </abbr>
-        </Link>
-      )} */}
+      </div>
       <Link href='/yeu-thich' className='cursor-pointer'>
         <abbr title='Yêu thích'>
           <svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' className='iconify iconify--mdi text-white hover:text-primary transition' width='30' height='30' viewBox='0 0 24 24'>
@@ -104,6 +76,25 @@ navTypes) => {
           </svg>
         </abbr>
       </Link>
+      {isAuthenticated ? (
+        <Button onClick={onAppSignOut}
+          icon={
+            <abbr title={`${isAuthenticated ? 'thông tin tài khoản' : 'Đăng nhập'}`}>
+              <Image src={user?.photoURL} width={23} height={23} className='rounded min-w-[23px]' alt='user' />
+            </abbr>
+          }
+          className='text-black cursor-pointer hover:opacity-90 flex '>
+        </Button>
+      ) : (
+        <Button onClick={onLoginGG}
+          icon={
+            <abbr title={`${isAuthenticated ? 'thông tin tài khoản' : 'Đăng nhập'}`}>
+              <LuUserSquare className='w-[32px] h-[28px]  text-primary' />
+            </abbr>
+          }
+          className='text-black cursor-pointer hover:opacity-90 flex '>
+        </Button>
+      )}
       <div className='lg:hidden text-white max-w-min'>
         <div className='cursor-pointer hover:opacity-90 duration-300' onClick={onToggleNavbar}>
           <abbr title='Menu'>
