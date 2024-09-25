@@ -8,10 +8,28 @@ import { v4 as uuid } from "uuid"
 // import BoxBG from "@/components/BoxBG"
 // import BoxSolid from "@/components/BoxSolid"
 // import { typeStatus } from "@/utils/constants"
-import { Suspense, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import Loading from "@/components/Loading"
 const Banner = ({ data }: { data: any }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const [convertData, setConvertDta] = useState<any>([])
+  useEffect(() => {
+    (async () => {
+      const dataConvert = await Promise.all(
+        data.map((item: any) => {
+          return new Promise((resolve) => {
+            const image = document.createElement('img')
+            image.src = item?.poster_url
+            image.onload = (e) => {
+              const width = (e.target as HTMLImageElement)?.width
+              resolve({ ...item, isShow: width < 700 ? true : false}) 
+            }
+          })
+        })
+      )
+      setConvertDta(dataConvert)
+    })()
+  }, [data])
   return (
     <Suspense fallback={<Loading></Loading>}>
       <div className='relative lg:top-0 w-full banner min-h-screen' id='banner'>
@@ -29,7 +47,7 @@ const Banner = ({ data }: { data: any }) => {
           noSwiping={true}
           slidesPerView={1}
           modules={[Navigation, Autoplay]}>
-          {data.map((movie: any) => {
+          {convertData.map((movie: any) => {
             return (
               <SwiperSlide key={uuid()}>
                 <div className='relative'>
@@ -47,7 +65,7 @@ const Banner = ({ data }: { data: any }) => {
                       sizes='100vw'
                     />
                   ) : (
-                    <Image src={movie?.poster_url} className='w-full h-full object-cover md:h-[70vh] lg:h-screen' alt='' priority width={1000} height={1000} sizes='100vw' />
+                    movie.isShow ? <div className="w-full h-full object-cover md:h-[70vh] lg:h-screen"></div> : <Image src={movie?.poster_url} className='w-full h-full object-cover md:h-[70vh] lg:h-screen' alt='' priority width={1000} height={1000} sizes='100vw' />
                   )}
                   <div className='h-full w-full absolute top-0 left-0 bg-black/35'></div>
                   <div className='absolute position-center !top-[80%] !left-[54%]  sm:!left-[52%] md:!left-[54%] md:position-center z-30 w-full flex container  sm:!top-[80%] md:!top-[70%] h-[350px] lg:h-[480px] '>
@@ -64,27 +82,11 @@ const Banner = ({ data }: { data: any }) => {
                         </div>
                       )}
                       <div className='my-3 md:mt-5 md:mb-5 flex flex-wrap gap-x-3 gap-y-2 md:text-md font-medium *:flex-basis *:flex *:flex-center *:gap-x-1 '>
-                        {/* <div className='w-full md:w-auto'>
-                        <div className='flex-basis flex gap-1'>
-                          <BoxBG value={movie?.episode_current} />
-                          <BoxSolid value={movie?.quality} />
-                        </div>
-                      </div> */}
                         <div className='!gap-x-3 *:flex *:items-center *:gap-x-1'>
-                          {/* <div className='flex-nowrap'>
-                          <FaClapperboard className='text-primary' />
-                          <span className='text-nowrap'>{episodesValue() as any}</span>
-                        </div> */}
                           <div className='-tracking-tighter'>
                             <MdDateRange size={25} className='text-primary' />
                             <span className='text-nowrap'>{movie?.year ?? 0}</span>
                           </div>
-                          {/* <div>
-                          <svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' className='text-primary iconify iconify--tdesign' width='16' height='16' viewBox='0 0 24 24'>
-                            <path fill='currentColor' d='M1 3h22v18H1zm2 2v14h18V5zm2 5a2 2 0 0 1 2-2h4v2H7v4h4v2H7a2 2 0 0 1-2-2zm8 0a2 2 0 0 1 2-2h4v2h-4v4h4v2h-4a2 2 0 0 1-2-2z'></path>
-                          </svg>
-                          <span className='line-clamp-1'>{movie?.lang}</span>
-                        </div> */}
                         </div>
                       </div>
                       <Link
