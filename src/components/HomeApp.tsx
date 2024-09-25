@@ -17,7 +17,6 @@ const HomeApp = () => {
   const dispatch = useDispatch()
   const { data }: storeState = useSelector((state: RootState) => state.storeApp)
   const { device } = useResize()
-  const [hydrated, setHydrated] = useState(false)
   const categoryRenderHome = [
     {
       name: "Hành động",
@@ -71,15 +70,12 @@ const HomeApp = () => {
     dispatch(getAllHomeCategory() as any)
   }, [])
   useEffect(() => {
-    setHydrated(true)
-  }, [])
-  useEffect(() => {
     if (data?.category.length) {
       if (window) window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }, [data?.category])
 
-  if (!data && !hydrated) return <Loading />
+  if (!data) return <Loading />
   return (
     <>
       <Banner data={data?.banner?.items ?? []} />
