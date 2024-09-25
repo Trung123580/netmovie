@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react"
-import { auth, db, googleProvider, twitterProvider } from "@/fireBase-config"
+import { auth, db, googleProvider } from "@/fireBase-config"
 import { signInWithPopup, signOut } from "firebase/auth"
 import { doc, collection, getDocs, setDoc, updateDoc, arrayUnion, getDoc } from "firebase/firestore"
 import Cookies from "universal-cookie"
