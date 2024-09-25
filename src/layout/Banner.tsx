@@ -30,17 +30,6 @@ const Banner = ({ data }: { data: any }) => {
           slidesPerView={1}
           modules={[Navigation, Autoplay]}>
           {data.map((movie: any) => {
-            const episodesValue = () => {
-              // const episodes = movie?.episode_current
-              // console.log(movie)
-              // if (episodes.includes(typeStatus.status1)) {
-              //   return `${movie?.episode_current.split(" ")[1]} / ${movie?.episode_total.includes("?") ? "?" : movie?.episode_total}`
-              // }
-              // if (episodes.includes(typeStatus.status2)) {
-              //   return typeStatus.status2 ?? ""
-              // }
-              return movie?.episode_current ?? ""
-            }
             return (
               <SwiperSlide key={uuid()}>
                 <div className='relative'>
@@ -98,7 +87,9 @@ const Banner = ({ data }: { data: any }) => {
                         </div> */}
                         </div>
                       </div>
-                      <Link href={`/details/${movie.slug}`} className='uppercase text-xs md:text-base gap-x-2 font-bold py-2 px-4 md:py-2 md:px-6 rounded-full border-2 border-primary duration-300 flex flex-center w-max hover:text-black hover:bg-primary'>
+                      <Link
+                        href={`/details/${movie.slug}`}
+                        className='uppercase text-xs md:text-base gap-x-2 font-bold py-2 px-4 md:py-2 md:px-6 rounded-full border-2 border-primary duration-300 flex flex-center w-max hover:text-black hover:bg-primary'>
                         <FaPlay /> xem ngay
                       </Link>
                     </div>

@@ -1,7 +1,7 @@
 "use client"
 import Banner from "@/layout/Banner"
 import { Swiper, SwiperSlide, Autoplay } from "@/utils/moduleSwiper"
-import { useEffect, useCallback, useMemo, useRef } from "react"
+import { useEffect, useCallback, useMemo, useRef, useState } from "react"
 import { getAllHomeCategory, getBanner } from "@/service"
 import { RootState } from "@/store/store"
 import { useDispatch, useSelector } from "react-redux"
@@ -13,11 +13,11 @@ import Loading from "./Loading"
 import useResize from "./hook/useResize"
 import { storeState } from "@/store/storeApi"
 import { useApp } from "@/context/ContextProvider"
-import { removeVietnameseTones } from "@/utils/helpers"
 const HomeApp = () => {
   const dispatch = useDispatch()
   const { data }: storeState = useSelector((state: RootState) => state.storeApp)
   const { device } = useResize()
+  const [hydrated, setHydrated] = useState(false)
   const categoryRenderHome = [
     {
       name: "Hành động",
@@ -44,24 +44,7 @@ const HomeApp = () => {
     currentUser,
     handle: { onToggleMovie },
   }: AuthContextType = useApp()
-  const renderSwipers = Array(4)
-    .fill(0)
-    .map((item: any, index: number) => {
-      return {
-        ...item,
-        key: index,
-        ref: useRef(null),
-      }
-    })
-  const renderTitle = useMemo(() => {
-    return Array(4)
-      .fill(0)
-      .map((_key, index) => {
-        return {
-          [index]: index === 0 ? "hành động" : index === 1 ? "Anime" : index === 2 ? "Kinh dị" : "Viễn Tưởng",
-        }
-      })
-  }, [data?.category.length])
+
   const handleNext = useCallback(
     (index: number) => {
       const findSwiper: any = categoryRenderHome.find((_item, indexRef) => indexRef === index)
@@ -70,7 +53,7 @@ const HomeApp = () => {
         swiper.slidePrev()
       }
     },
-    [renderSwipers.length]
+    [categoryRenderHome]
   )
   const handlePrev = useCallback(
     (index: number) => {
@@ -80,24 +63,23 @@ const HomeApp = () => {
         swiper.slideNext()
       }
     },
-    [renderSwipers.length]
+    [categoryRenderHome]
   )
 
   useEffect(() => {
     dispatch(getBanner(1) as any)
     dispatch(getAllHomeCategory() as any)
-    // return () => {
-    // dispatch(clearDataCategory([]));
-    // };
+  }, [])
+  useEffect(() => {
+    setHydrated(true)
   }, [])
   useEffect(() => {
     if (data?.category.length) {
       if (window) window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }, [data?.category])
-  console.log(categoryRenderHome)
 
-  if (!data) return <Loading />
+  if (!data && !hydrated) return <Loading />
   return (
     <>
       <Banner data={data?.banner?.items ?? []} />

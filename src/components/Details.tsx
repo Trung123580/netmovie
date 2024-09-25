@@ -94,7 +94,6 @@ const Details = ({ slug }: { slug: string }) => {
     const match = serverName.match(/SV\s?#(\d+)/) // Lấy số từ "SV #1", "SV #2", ...
     return match ? parseInt(match[1], 10) : Infinity // Nếu không tìm thấy, trả về Infinity (để xếp cuối)
   }
-  console.log("isLoadingVideo", isLoadingVideo)
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
     return () => dispatch(clearDataCategory(null) as any)
@@ -148,7 +147,6 @@ const Details = ({ slug }: { slug: string }) => {
     }
     return () => time && clearTimeout(time)
   }, [detail, searchServerName, searchPractice])
-  console.log(relate)
   const handleChangeEpisode = (indexServer: number, episode: string) => {
     router.push(pathName + "?" + `server=${indexServer}` + "&" + `tap=${episode}`)
   }
@@ -303,7 +301,6 @@ const Details = ({ slug }: { slug: string }) => {
         </div>
       </div>
     )
-  console.log(currentUser)
 
   return (
     <>

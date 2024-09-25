@@ -302,10 +302,10 @@ export const aboutUs = [
   { id: uuid(), name: "CHÍNH SÁCH", path: "" },
 ]
 export const aboutIcon = [
-  { id: uuid(), icon: FaFacebookSquare, path: "https://www.facebook.com/" },
-  { id: uuid(), icon: FaGithubSquare, path: "https://github.com/" },
+  { id: uuid(), icon: FaFacebookSquare, path: "https://www.facebook.com/profile.php?id=100030925532732" },
+  { id: uuid(), icon: FaGithubSquare, path: "https://github.com/Trung123580" },
   { id: uuid(), icon: FaTwitterSquare, path: "https://x.com/" },
-  { id: uuid(), icon: FaInstagramSquare, path: "https://www.instagram.com/" },
+  { id: uuid(), icon: FaInstagramSquare, path: "https://www.instagram.com/vuongvan_trung" },
 ]
 export const years = Array.from({ length: new Date().getFullYear() - 2000 + 1 }, (_, i) => {
   const year = 2000 + i

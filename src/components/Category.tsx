@@ -8,6 +8,7 @@ import { category } from "@/utils/constants"
 import { useDispatch, useSelector } from "react-redux"
 import { setIsLoading } from "@/store/storeApi"
 import { RootState } from "@/store/store"
+import { storeState } from "@/store/storeApi"
 import Loading from "@/components/Loading"
 import useResize from "./hook/useResize"
 import { useApp } from "@/context/ContextProvider"
@@ -19,7 +20,7 @@ enum numberPage {
   four,
 }
 function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
-  const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
+  const { isLoading }: storeState = useSelector((state: RootState) => state.storeApp)
   const [dataNewMovie, setDataNewMovie] = useState<any>([])
   const [totalPages, setTotalPages] = useState<number>(numberPage.one)
   const [year, setYear] = useState(() => {
@@ -32,7 +33,7 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   const {
     currentUser,
     handle: { onToggleMovie },
-  }: AuthContextType = useApp();
+  }: AuthContextType = useApp()
   const { device } = useResize()
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
@@ -45,12 +46,12 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   }
   useEffect(() => {
     if (!dataDefault) return
-      ; (async () => {
-        dispatch(setIsLoading(false))
-        setDataNewMovie(dataDefault?.items)
-        setTotalPages(Number(dataDefault?.pagination.totalPages))
-        handleScrollToTop()
-      })()
+    ;(async () => {
+      dispatch(setIsLoading(false))
+      setDataNewMovie(dataDefault?.items)
+      setTotalPages(Number(dataDefault?.pagination.totalPages))
+      handleScrollToTop()
+    })()
   }, [searchPage, slug, dataDefault?.items.length, page])
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     if (year) {
@@ -88,13 +89,7 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
       <TitlePath year={year} sort={true} onChange={handleChangeYear} title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  md:gap-x-5 gap-x-[15px] gap-y-6 md:gap-y-10'>
         {dataNewMovie.map((movie: any) => (
-          <CardProduct
-            key={movie._id}
-            data={movie}
-            device={device}
-            onToggleMovie={() => onToggleMovie(movie)}
-            findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)}
-          />
+          <CardProduct key={movie._id} data={movie} device={device} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)} />
         ))}
       </div>
       <div className='my-10 flex justify-end'>

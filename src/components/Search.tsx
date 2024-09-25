@@ -26,7 +26,6 @@ const Search = ({ query, page }: { query: string; page: number }) => {
   const router = useRouter()
   const pathName = usePathname()
   // const searchPage: number | null = Number(searchParams.get('page') ?? numberPage.one);
-  console.log(query)
   const {
     currentUser,
     handle: { onToggleMovie },
@@ -41,8 +40,6 @@ const Search = ({ query, page }: { query: string; page: number }) => {
   const { items, pagination } = search
   const { totalPages, currentPage, totalItems, totalItemsPerPage } = pagination
   const dispatch = useDispatch()
-  console.log(pagination, items)
-  console.log(search)
 
   useEffect(() => {
     ;(async () => {

@@ -6,6 +6,9 @@ import { doc, collection, getDocs, setDoc, updateDoc, arrayUnion, getDoc } from 
 import Cookies from "universal-cookie"
 import { toast } from "react-toastify"
 import { popup } from "@/utils/constants"
+import dayjs from "dayjs"
+import { useDispatch } from "react-redux"
+import { setIsLoading } from "@/store/storeApi"
 const ContextApp = createContext({} as AuthContextType)
 const expirationDate = new Date()
 const cookies = new Cookies()
@@ -21,6 +24,7 @@ const ContextProvider = ({
   const keyUserCookies: any = process.env.NEXT_PUBLIC_KEY_COOKIES
   const [currentUser, setCurrentUser] = useState<any>(null)
   const [user, setUser] = useState<any>(() => cookies.get(keyUserCookies) ?? null)
+  const dispatch = useDispatch()
   const [showPopup, setShowPopup] = useState<popupType>({
     popup: "",
     isShow: false,
@@ -75,10 +79,17 @@ const ContextProvider = ({
       try {
         if (!!user) {
           if (user?.uid) {
+            dispatch(setIsLoading(true))
             const docRef = doc(db, "users", user?.uid)
             const docSnap = await getDoc(docRef)
             const data = docSnap.data()
-            setCurrentUser(data)
+            const sortTimeAddMovie = data?.loveMovie.sort((a: any, b: any) => {
+              if (a.timeAdd > b.timeAdd) return -1
+              if (a.timeAdd < b.timeAdd) return 1
+              return 0
+            })
+            dispatch(setIsLoading(false))
+            setCurrentUser({ ...data, loveMovie: sortTimeAddMovie })
           }
         }
       } catch (error) {
@@ -123,9 +134,9 @@ const ContextProvider = ({
         return
       }
       await updateDoc(userDoc, {
-        loveMovie: arrayUnion({ ...movie }),
+        loveMovie: arrayUnion({ ...movie, timeAdd: dayjs().valueOf() }),
       }).then(() => {
-        setCurrentUser({ ...currentUser, loveMovie: [...currentUser.loveMovie, { ...movie }] })
+        setCurrentUser({ ...currentUser, loveMovie: [...currentUser.loveMovie, { ...movie, timeAdd: dayjs().valueOf() }] })
         handleShowToast("đã thêm phim vào danh sách yêu thích", StringEnum.success)
       })
     }
