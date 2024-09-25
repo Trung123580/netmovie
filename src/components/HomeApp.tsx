@@ -78,7 +78,7 @@ const HomeApp = () => {
   if (!data) return <Loading />
   return (
     <>
-      <Banner data={data?.banner?.items ?? []} />
+      <Banner data={data?.banner?.items ?? []} device={device} />
       <div className='bg-overlay'>
         <div className='container'>
           {data?.category.map((key: string, index: number) => {

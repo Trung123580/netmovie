@@ -10,19 +10,19 @@ import { v4 as uuid } from "uuid"
 // import { typeStatus } from "@/utils/constants"
 import { Suspense, useEffect, useState } from "react"
 import Loading from "@/components/Loading"
-const Banner = ({ data }: { data: any }) => {
+const Banner = ({ data, device }: { data: any; device: string }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [convertData, setConvertDta] = useState<any>([])
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const dataConvert = await Promise.all(
         data.map((item: any) => {
           return new Promise((resolve) => {
-            const image = document.createElement('img')
+            const image = document.createElement("img")
             image.src = item?.poster_url
             image.onload = (e) => {
               const width = (e.target as HTMLImageElement)?.width
-              resolve({ ...item, isShow: width < 700 ? true : false}) 
+              resolve({ ...item, isShow: width < 700 ? true : false })
             }
           })
         })
@@ -30,9 +30,11 @@ const Banner = ({ data }: { data: any }) => {
       setConvertDta(dataConvert)
     })()
   }, [data])
+  console.log(device)
+
   return (
     <Suspense fallback={<Loading></Loading>}>
-      <div className='relative lg:top-0 w-full banner min-h-screen' id='banner'>
+      <div className='relative lg:top-0 w-full banner md:min-h-screen' id='banner'>
         <Swiper
           autoplay={{
             delay: 7000,
@@ -46,8 +48,11 @@ const Banner = ({ data }: { data: any }) => {
           navigation={true}
           noSwiping={true}
           slidesPerView={1}
-          modules={[Navigation, Autoplay]}>
+          modules={[Navigation]}>
           {convertData.map((movie: any) => {
+            console.log(movie.isShow)
+            console.log(device)
+
             return (
               <SwiperSlide key={uuid()}>
                 <div className='relative'>
@@ -64,8 +69,10 @@ const Banner = ({ data }: { data: any }) => {
                       height={1000}
                       sizes='100vw'
                     />
+                  ) : movie.isShow && device === "pc" ? (
+                    <Image src={"/images/logo.jpg"} className='w-full object-contain h-[45vh] md:h-[70vh] lg:h-screen rotate-45' alt='' priority width={1000} height={1000} sizes='100vw' />
                   ) : (
-                    movie.isShow ? <div className="w-full h-full object-cover md:h-[70vh] lg:h-screen"></div> : <Image src={movie?.poster_url} className='w-full h-full object-cover md:h-[70vh] lg:h-screen' alt='' priority width={1000} height={1000} sizes='100vw' />
+                    <Image src={movie?.poster_url} className={`w-full object-cover h-[45vh] md:h-[70vh] lg:h-screen`} alt='' priority width={1000} height={1000} sizes='100vw' />
                   )}
                   <div className='h-full w-full absolute top-0 left-0 bg-black/35'></div>
                   <div className='absolute position-center !top-[80%] !left-[54%]  sm:!left-[52%] md:!left-[54%] md:position-center z-30 w-full flex container  sm:!top-[80%] md:!top-[70%] h-[350px] lg:h-[480px] '>
