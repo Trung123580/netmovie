@@ -10,6 +10,7 @@ import { setIsLoading } from "@/store/storeApi"
 import { RootState } from "@/store/store"
 import Loading from "@/components/Loading"
 import useResize from "./hook/useResize"
+import { useApp } from "@/context/ContextProvider"
 enum numberPage {
   zero,
   one,
@@ -28,11 +29,10 @@ function Regions({ slug, dataDefault, page, yearDate }: { yearDate: string; page
       return 0
     }
   })
-  // const {
-  //   currentUser,
-  //   handle: { onLoading, onToggleMovie },
-  //   headerData: { category },
-  // }: any = useApp();
+  const {
+    currentUser,
+    handle: { onToggleMovie },
+  }: AuthContextType = useApp()
   const { device } = useResize()
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
@@ -45,12 +45,12 @@ function Regions({ slug, dataDefault, page, yearDate }: { yearDate: string; page
   }
   useEffect(() => {
     if (!dataDefault) return
-    ;(async () => {
-      dispatch(setIsLoading(false))
-      setDataNewMovie(dataDefault?.items)
-      setTotalPages(Number(dataDefault?.pagination.totalPages))
-      handleScrollToTop()
-    })()
+      ; (async () => {
+        dispatch(setIsLoading(false))
+        setDataNewMovie(dataDefault?.items)
+        setTotalPages(Number(dataDefault?.pagination.totalPages))
+        handleScrollToTop()
+      })()
   }, [searchPage, slug, dataDefault?.items.length, page])
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     if (year) {
@@ -92,8 +92,8 @@ function Regions({ slug, dataDefault, page, yearDate }: { yearDate: string; page
             key={movie._id}
             data={movie}
             device={device}
-            // onToggleMovie={() => onToggleMovie(movie)}
-            // findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === movie.id)}
+            onToggleMovie={() => onToggleMovie(movie)}
+            findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)}
           />
         ))}
       </div>

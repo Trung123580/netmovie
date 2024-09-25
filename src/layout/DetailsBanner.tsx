@@ -84,7 +84,7 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
                 content={findIsLoveMovie ? "Bỏ Thích" : "Yêu Thích"}
                 onClick={onToggleMovie}
                 icon={findIsLoveMovie ? <LuHeartCrack size={20} /> : <LuHeart fontSize={20} />}
-                className={`${findIsLoveMovie ? " bg-red text-black border-red hover:bg-red/80" : "bg-black/70 border-primary hover:bg-primary/20"} text-nowrap flex items-center gap-2 rounded-full border-2 px-5 py-2.5 duration-300`}
+                className={`${findIsLoveMovie ? " bg-primary/70 text-white border-primary hover:bg-primary/80" : "bg-black/70 border-primary hover:bg-primary/20"} text-nowrap flex items-center gap-2 rounded-full border-2 px-5 py-2.5 duration-300`}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { getBanner, getAllHomeCategory, getDetailMovie, getMoviesRelate } from "@/service"
+import { getBanner, getAllHomeCategory, getDetailMovie, getMoviesRelate, getSearchMovies } from "@/service"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export interface storeState {
@@ -8,6 +8,16 @@ export interface storeState {
     category: any[]
     detail: null | any
     relate: null | any
+    search: {
+      status: boolean,
+      items: any[] | [],
+      pagination: {
+        currentPage: number,
+        totalItems: number,
+        totalItemsPerPage: string,
+        totalPages: number,
+      }
+    }
   }
 }
 
@@ -21,6 +31,16 @@ const initialState: storeState = {
     category: [],
     detail: null,
     relate: null,
+    search: {
+      items: [],
+      pagination: {
+        currentPage: 0,
+        totalItems: 0,
+        totalItemsPerPage: '',
+        totalPages: 0,
+      },
+      status: false,
+    }
   },
 }
 
@@ -49,13 +69,13 @@ export const storeSlice = createSlice({
     builder.addCase(getBanner.pending, (state) => {
       state.isLoading = true
     })
-    builder.addCase(getBanner.fulfilled, (state, action) => {
+    builder.addCase(getBanner.fulfilled, (state, action: PayloadAction<any>) => {
       state.data.banner = action.payload
     })
     builder.addCase(getBanner.rejected, (state) => {
       state.isLoading = false
     })
-    builder.addCase(getAllHomeCategory.fulfilled, (state, action) => {
+    builder.addCase(getAllHomeCategory.fulfilled, (state, action: PayloadAction<any>) => {
       state.data.category = action.payload
       state.isLoading = false
     })
@@ -63,13 +83,21 @@ export const storeSlice = createSlice({
     builder.addCase(getDetailMovie.pending, (state) => {
       state.isLoading = true
     })
-    builder.addCase(getDetailMovie.fulfilled, (state, action) => {
+    builder.addCase(getDetailMovie.fulfilled, (state, action: PayloadAction<any>) => {
       state.data.detail = action.payload
       state.isLoading = false
     })
     // movies
-    builder.addCase(getMoviesRelate.fulfilled, (state, action) => {
+    builder.addCase(getMoviesRelate.fulfilled, (state, action: PayloadAction<any>) => {
       state.data.relate = action.payload
+    })
+    // search
+    builder.addCase(getSearchMovies.pending, (state) => {
+      state.isLoading = true
+    })
+    builder.addCase(getSearchMovies.fulfilled, (state, action: PayloadAction<any>) => {
+      state.data.search = action.payload
+      state.isLoading = false
     })
   },
 })

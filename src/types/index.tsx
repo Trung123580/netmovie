@@ -22,15 +22,16 @@ type movie = {
 type navTypes = {
   isShowNavBar: boolean
   onToggleNavbar: func
-  user: any;
-  isAuthenticated: boolean;
+  user: any
+  isAuthenticated: boolean
   openMenuCategory: string
   onToggleOpenMenuCategory: any
   convertHeader: any
   isMobile: boolean
-  onShowPopup: func;
+  onShowPopup: funcProps
   onLoginGG: func
-  onAppSignOut: func;
+  onAppSignOut: func
+  // onShowPopup: func;
 }
 // type MenuGenresAndRegions = {
 //   category: string[] | number[] | any[] | null;
@@ -83,13 +84,14 @@ type popupType = { popup: string; isShow: boolean; srcTrailer?: string; infoPay?
 type AuthContextType = {
   states: {
     showPopup: popupType
-  },
-  isAuthenticated: boolean,
-  user: any,
-  currentUser: any,
+  }
+  isAuthenticated: boolean
+  user: any
+  currentUser: any
   handle: {
-    onLoginGG: func
+    onToggleMovie: funcProps
     onAppSignOut: func
+    onLoginGG: func
     onShowPopup: (popup?: string, srcTrailer?: string, infoPay?: any, dataPopupYesNo?: any) => void
     onShowToast: (message: string, type: string) => void
   }
@@ -126,6 +128,6 @@ type ServerData = {
     link_m3u8: string
     name: string
     slug: string
-  }[],
+  }[]
   server_name: string
 }

@@ -1,13 +1,14 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react"
-import { auth, db, googleProvider, twitterProvider } from '@/fireBase-config';
-import { signInWithPopup, signOut } from 'firebase/auth';
-import { doc, collection, getDocs, setDoc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
-import Cookies from 'universal-cookie';
+import { auth, db, googleProvider, twitterProvider } from "@/fireBase-config"
+import { signInWithPopup, signOut } from "firebase/auth"
+import { doc, collection, getDocs, setDoc, updateDoc, arrayUnion, getDoc } from "firebase/firestore"
+import Cookies from "universal-cookie"
 import { toast } from "react-toastify"
+import { popup } from "@/utils/constants"
 const ContextApp = createContext({} as AuthContextType)
-const expirationDate = new Date();
-const cookies = new Cookies();
+const expirationDate = new Date()
+const cookies = new Cookies()
 enum StringEnum {
   success = "success",
   error = "error",
@@ -17,9 +18,9 @@ const ContextProvider = ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const keyUserCookies: any = process.env.NEXT_PUBLIC_KEY_COOKIES;
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [user, setUser] = useState<any>(() => cookies.get(keyUserCookies) ?? null);
+  const keyUserCookies: any = process.env.NEXT_PUBLIC_KEY_COOKIES
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [user, setUser] = useState<any>(() => cookies.get(keyUserCookies) ?? null)
   const [showPopup, setShowPopup] = useState<popupType>({
     popup: "",
     isShow: false,
@@ -27,65 +28,65 @@ const ContextProvider = ({
     infoPay: null,
     dataPopupYesNo: null,
   })
-  const userCollection = collection(db, 'users');
+  const userCollection = collection(db, "users")
   const handleLoginGG = async () => {
     try {
-      const responseUser = await signInWithPopup(auth, googleProvider);
-      if (!responseUser) return;
-      const currentMonth = expirationDate.getMonth();
-      expirationDate.setMonth(currentMonth + 1);
+      const responseUser = await signInWithPopup(auth, googleProvider)
+      if (!responseUser) return
+      const currentMonth = expirationDate.getMonth()
+      expirationDate.setMonth(currentMonth + 1)
       if (expirationDate.getMonth() === currentMonth) {
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1)
       }
-      cookies.set(keyUserCookies, responseUser.user, { expires: expirationDate });
-      setUser(responseUser.user);
+      cookies.set(keyUserCookies, responseUser.user, { expires: expirationDate })
+      setUser(responseUser.user)
       // handleShowPopup();
       // => add các trường để lưu thông tin theo user
-      const data = await getDocs(userCollection);
+      const data = await getDocs(userCollection)
       const userData = data.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
-      });
-      const isUser = userData.some((user) => user.id === auth.currentUser?.uid);
+        return { ...doc.data(), id: doc.id }
+      })
+      const isUser = userData.some((user) => user.id === auth.currentUser?.uid)
       if (!isUser) {
-        await setDoc(doc(db, 'users', auth.currentUser?.uid as string), {
+        await setDoc(doc(db, "users", auth.currentUser?.uid as string), {
           userName: auth.currentUser?.displayName as string,
           email: auth.currentUser?.email as string,
           avatar: auth.currentUser?.photoURL as string,
           loveMovie: [], // theo doi movie
           // historyMovie: [], // lịch sử xem phim
           // historyPay: [], // lịch sử thanh toán
-        });
+        })
       }
+      handleShowToast("Đăng nhập thành công", StringEnum.success)
     } catch (error) {
-      console.error('Error getting redirect result: ', error);
+      console.error("Error getting redirect result: ", error)
     }
-  };
+  }
   const handleAppSignOut = async () => {
-    if (!user) return;
-    cookies.remove(keyUserCookies);
-    setUser(null);
-    setCurrentUser(null);
-    await signOut(auth);
-  };
+    if (!user) return
+    cookies.remove(keyUserCookies)
+    setUser(null)
+    setCurrentUser(null)
+    handleShowToast("Đăng xuất thành công", StringEnum.success)
+    await signOut(auth)
+  }
   useEffect(() => {
     const getUser = async () => {
       try {
         if (!!user) {
           if (user?.uid) {
-            const docRef = doc(db, 'users', user?.uid);
-            const docSnap = await getDoc(docRef);
-            const data = docSnap.data();
-            setCurrentUser(data);
+            const docRef = doc(db, "users", user?.uid)
+            const docSnap = await getDoc(docRef)
+            const data = docSnap.data()
+            setCurrentUser(data)
           }
         }
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
-    };
-    getUser();
-    // eslint-disable-next-line
-    //  appCallBack,
-  }, [user]);
+    }
+    getUser()
+  }, [user])
   const handleShowPopup = (popup?: string, srcTrailer?: string, infoPay?: any, dataPopupYesNo?: any) =>
     setShowPopup({
       popup: popup as string,
@@ -102,6 +103,33 @@ const ContextProvider = ({
       toast.error(message)
     }
   }
+  const handleToggleMovie = async (movie: any) => {
+    if (!user) {
+      handleShowToast("Vui lòng đăng nhập để thực hiện chức năng này", StringEnum.error)
+      handleShowPopup(popup.logins)
+      return
+    }
+    if (currentUser) {
+      const isMovieLove = currentUser?.loveMovie.some((item: any) => item._id === movie._id)
+      const userDoc = doc(db, "users", user?.uid)
+      if (isMovieLove) {
+        const newLoveMovie = currentUser?.loveMovie.filter(({ _id }: { _id: number }) => _id !== movie._id)
+        await updateDoc(userDoc, {
+          loveMovie: newLoveMovie,
+        }).then(() => {
+          setCurrentUser({ ...currentUser, loveMovie: [...newLoveMovie] })
+          handleShowToast("đã xóa phim khỏi danh sách yêu thích", StringEnum.error)
+        })
+        return
+      }
+      await updateDoc(userDoc, {
+        loveMovie: arrayUnion({ ...movie }),
+      }).then(() => {
+        setCurrentUser({ ...currentUser, loveMovie: [...currentUser.loveMovie, { ...movie }] })
+        handleShowToast("đã thêm phim vào danh sách yêu thích", StringEnum.success)
+      })
+    }
+  }
   return (
     <ContextApp.Provider
       value={{
@@ -112,6 +140,7 @@ const ContextProvider = ({
         user: user,
         currentUser: currentUser,
         handle: {
+          onToggleMovie: handleToggleMovie,
           onLoginGG: handleLoginGG,
           onAppSignOut: handleAppSignOut,
           onShowPopup: handleShowPopup,

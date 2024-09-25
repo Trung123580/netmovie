@@ -21,7 +21,7 @@ import useResize from "./hook/useResize"
 import VideoControl from "./Video/VideoControl"
 import { togglePlayVideo } from "@/store/storeAction"
 import Image from "next/image"
-import { v4 as uuid } from 'uuid'
+import { v4 as uuid } from "uuid"
 enum numberPage {
   zero,
   one,
@@ -71,7 +71,8 @@ const Details = ({ slug }: { slug: string }) => {
   //   handle: { onLoading, onShowPopup, onShowToast, onToggleMovie, onAddHistory },
   // }: any = useApp()
   const {
-    handle: { onShowPopup },
+    currentUser,
+    handle: { onShowPopup, onToggleMovie },
   }: AuthContextType = useApp()
   const searchParams = useSearchParams()
   const pathName = usePathname()
@@ -90,23 +91,10 @@ const Details = ({ slug }: { slug: string }) => {
   }, [detail])
 
   const getSVNumber = (serverName: string) => {
-    const match = serverName.match(/SV\s?#(\d+)/); // Lấy số từ "SV #1", "SV #2", ...
-    return match ? parseInt(match[1], 10) : Infinity; // Nếu không tìm thấy, trả về Infinity (để xếp cuối)
-  };
-  console.log(detail)
-  console.log(searchServerName)
-  console.log(searchPractice);
-  console.log(episodesList)
-  // useEffect(() =>{
-  //   if (!episodesList.length) return 
-  //   if (searchServerName && searchPractice){
-  //     const findServer = episodesList.find(({server_name}: ServerData) =>  server_name === searchServerName)
-  //     // const episode = findServer.episodes.find(({slug}: itemServerData) => slug === String(searchPractice)) 
-  //     // console.log(findServer, episode);
-  //     console.log(findServer);
-  //   }
-  // },[episodesList, searchServerName, searchPractice])
-
+    const match = serverName.match(/SV\s?#(\d+)/) // Lấy số từ "SV #1", "SV #2", ...
+    return match ? parseInt(match[1], 10) : Infinity // Nếu không tìm thấy, trả về Infinity (để xếp cuối)
+  }
+  console.log("isLoadingVideo", isLoadingVideo)
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
     return () => dispatch(clearDataCategory(null) as any)
@@ -130,24 +118,24 @@ const Details = ({ slug }: { slug: string }) => {
         return
       }
       const convertSort = [...detail.episodes].sort((a: any, b: any) => {
-        const svNumberA = getSVNumber(a.server_name);
-        const svNumberB = getSVNumber(b.server_name);
-        return svNumberA - svNumberB;
+        const svNumberA = getSVNumber(a.server_name)
+        const svNumberB = getSVNumber(b.server_name)
+        return svNumberA - svNumberB
       })
       if (searchServerName && searchPractice) {
-        const findServer = convertSort[searchServerName - 1].server_data.filter((item: any) => item.name !== 'undefined')
+        const findServer = convertSort[searchServerName - 1].server_data.filter((item: any) => item.name !== "undefined")
         const episode = findServer.find(({ slug }: itemServerData) => slug === String(searchPractice))
         // check tim duoc tap ko
-        if (!episode) router.back();
+        if (!episode) router.back()
         const checkLink = convertLinkPlayer({ link: episode.link_embed })
         if (checkLink.type === "video") {
           setDataVideo({ linkPlay: checkLink.linkPlay, type: "video" })
         } else {
           setDataVideo({ linkPlay: checkLink.linkPlay, type: "iframe" })
         }
-        document.getElementById('wrapperVideo')?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+        document.getElementById("wrapperVideo")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
       } else {
-        const defaultLink = (convertSort[0]?.server_data.filter((item: any) => item.name !== 'undefined')[0].link_embed as string) ?? ""
+        const defaultLink = (convertSort[0]?.server_data.filter((item: any) => item.name !== "undefined")[0].link_embed as string) ?? ""
         const checkLink = convertLinkPlayer({ link: defaultLink })
         if (checkLink.type === "video") {
           setDataVideo({ linkPlay: checkLink.linkPlay, type: "video" })
@@ -162,7 +150,7 @@ const Details = ({ slug }: { slug: string }) => {
   }, [detail, searchServerName, searchPractice])
   console.log(relate)
   const handleChangeEpisode = (indexServer: number, episode: string) => {
-    router.push(pathName + '?' + `server=${indexServer}` + '&' + `tap=${episode}`)
+    router.push(pathName + "?" + `server=${indexServer}` + "&" + `tap=${episode}`)
   }
   const handleNext = useCallback(() => {
     if (refSwiper.current) refSwiper.current?.swiper.slidePrev()
@@ -175,7 +163,7 @@ const Details = ({ slug }: { slug: string }) => {
   const handleTogglePlayVideo = () => dispatch(togglePlayVideo(!isPlay))
   const handleToggleMiniMap = () => setStateScreenMode((prev) => ({ ...prev, isMiniPlayer: !prev.isMiniPlayer }))
   const durationCurrent = formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds))
-  const durationVideo = durationCurrent === '0:00' ? formatDuration(defaultDuration) : durationCurrent
+  const durationVideo = durationCurrent === "0:00" ? formatDuration(defaultDuration) : durationCurrent
   const optionVideoControls = {
     isPlay: isPlay,
     volume: volume,
@@ -216,6 +204,15 @@ const Details = ({ slug }: { slug: string }) => {
     const wrapperVideo = document.querySelector("#wrapperVideo")
     const wrapperControl = document.querySelector("#wrapperControl")
     const btnPlay = document.querySelector("#btnPlay")
+    if (isPlay) {
+      if (!wrapperVideo?.classList.contains("cursor-none")) {
+        refTimeOut.current = setTimeout(() => {
+          wrapperVideo?.classList.add("cursor-none")
+          wrapperControl?.classList.add("hidden")
+          btnPlay?.classList.add("hidden")
+        }, 2500)
+      }
+    }
     if (!isPlay) {
       wrapperVideo?.classList.remove("cursor-none")
       wrapperControl?.classList.remove("hidden")
@@ -241,6 +238,43 @@ const Details = ({ slug }: { slug: string }) => {
       if (wrapperVideo) wrapperVideo.removeEventListener("mousemove", handleHideController)
     }
   }, [isPlay])
+  useEffect(() => {
+    if (!refPlayer.current) return
+
+    const handleListenKeydown = async (e: any) => {
+      if (e.code === "Space" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        handleTogglePlayVideo()
+      }
+      if (e.code === "ArrowRight" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        const currentTime = refPlayer.current.getCurrentTime()
+        await refPlayer.current.seekTo(currentTime + 15, "seconds")
+      }
+      if (e.code === "ArrowLeft" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        const currentTime = refPlayer.current.getCurrentTime()
+        await refPlayer.current.seekTo(Math.max(currentTime - 15, 0), "seconds") // nếu nhỏ hơn 0 trả về 0
+      }
+      if (e.code === "ArrowUp" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        setVolume((prevVolume) => Math.min(prevVolume + 15, 100)) // nếu lớn hơn 100 trả về 100
+      }
+      if (e.code === "ArrowDown" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        setVolume((prevVolume) => Math.max(prevVolume - 15, 0)) // nếu nhỏ hơn 0 trả về 0
+      }
+      if (e.code === "KeyF" && e.target.tagName !== "INPUT") {
+        e.preventDefault()
+        optionVideoControls.onChangeFullScreen()
+      }
+    }
+    window.addEventListener("keydown", handleListenKeydown)
+    return () => {
+      window.removeEventListener("keydown", handleListenKeydown)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refPlayer.current, volume, isPlay])
   if (isLoading) {
     return (
       <div className='min-h-screen'>
@@ -269,34 +303,25 @@ const Details = ({ slug }: { slug: string }) => {
         </div>
       </div>
     )
+  console.log(currentUser)
+
   return (
     <>
-      <ReactPlayer url={linkPlay} className="hidden" onDuration={(e) => setDefaultDuration(Math.floor(e))} />
-      <DetailsBanner data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
-      {/* <video src={linkPlay} id='audio' className='hidden' autoPlay={false} controls={false}></video> */}
-      {/* popup={popup} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === dataDetailMovie.id)} onToggleMovie={() => onToggleMovie(dataDetailMovie)} */}
+      {dataVideo.type === "video" && <ReactPlayer url={linkPlay} className='hidden' onDuration={(e) => setDefaultDuration(Math.floor(e))} />}
+      <DetailsBanner findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === detail.movie._id)} onToggleMovie={() => onToggleMovie(detail?.movie)} data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
       <div className='bg-overlay md:py-14'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
           {episodesList.map(({ server_data, server_name }: ServerData, index: number) => {
             return (
               <div key={server_name}>
                 <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>SERVER {index + 1}</h3>
-                <Swiper
-                  className="cursor-pointer wrapper-episodes my-4"
-                  breakpoints={{}}
-                  spaceBetween={20}
-                  loop={true}
-                  keyboard={true}
-                  rewind={true}
-                  noSwiping={true}
-                  slidesPerView={"auto"}
-                  modules={[]}>
+                <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
                   {server_data?.map(({ name, slug }) => {
-                    const convertEpisodes = name.startsWith('0') ? name.substring(1, name.length) : name
-                    if (name === 'undefined') return <React.Fragment key={uuid()}></React.Fragment>
+                    const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
+                    if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
                     return (
                       <SwiperSlide key={uuid()}>
-                        <Button onClick={() => handleChangeEpisode(index + 1, slug)} className="border inline-block w-full h-full border-primary rounded-md py-1" key={uuid()} content={convertEpisodes} />
+                        <Button onClick={() => handleChangeEpisode(index + 1, slug)} className='border inline-block w-full h-full border-primary rounded-md py-1' key={uuid()} content={convertEpisodes} />
                       </SwiperSlide>
                     )
                   })}
@@ -320,7 +345,7 @@ const Details = ({ slug }: { slug: string }) => {
                 allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
               />
             ) : (
-              <section className='relative' onClick={handleTogglePlayVideo} >
+              <section className='relative' onClick={handleTogglePlayVideo} onDoubleClick={() => optionVideoControls.onChangeFullScreen()}>
                 <ReactPlayer
                   ref={refPlayer}
                   controls={false}
@@ -331,7 +356,7 @@ const Details = ({ slug }: { slug: string }) => {
                   light={defaultIsPlay ? <Image alt='' className='rounded-md object-contain' layout='fill' src={defaultPosterVideo} /> : ""}
                   width={"100%"}
                   height={"100%"}
-                  className=' bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'
+                  className='bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'
                   onProgress={(e) => setCurrentSeconds(Math.floor(e.playedSeconds))}
                   onBuffer={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: true }))}
                   onBufferEnd={() => setStatePlayVideo((prev) => ({ ...prev, isLoadingVideo: false }))}
@@ -364,7 +389,6 @@ const Details = ({ slug }: { slug: string }) => {
           </div>
         </div>
       </div>
-      <div className='container'>{/* <Comments {...optionComment} /> */}</div>
       <div className='container'>
         <TitlePath title='Phim Liên Quan' onClickNext={() => handleNext()} onClickPrev={() => handlePrev()} />
         <Swiper
@@ -407,18 +431,13 @@ const Details = ({ slug }: { slug: string }) => {
           autoplay={{
             delay: 5000,
             disableOnInteraction: false,
-            pauseOnMouseEnter: true
+            pauseOnMouseEnter: true,
           }}
           modules={[Autoplay]}>
           {relate?.items.map((movie: any) => (
             <SwiperSlide key={movie?._id}>
               {/* // onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} */}
-              <CardProduct
-                device={device}
-                data={movie}
-              // onToggleMovie={() => onToggleMovie(movie)}
-              //  findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === movie.id)}
-              />
+              <CardProduct device={device} data={movie} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)} />
             </SwiperSlide>
           ))}
         </Swiper>

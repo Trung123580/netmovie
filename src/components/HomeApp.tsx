@@ -12,16 +12,38 @@ import CardProduct from "@/components/CardProduct"
 import Loading from "./Loading"
 import useResize from "./hook/useResize"
 import { storeState } from "@/store/storeApi"
+import { useApp } from "@/context/ContextProvider"
+import { removeVietnameseTones } from "@/utils/helpers"
 const HomeApp = () => {
   const dispatch = useDispatch()
   const { data }: storeState = useSelector((state: RootState) => state.storeApp)
   const { device } = useResize()
-
-  // console.log(Object.keys(data?.banner?.items[0]));
-  //  const {
-  //     currentUser,
-  //     handle: { onToggleMovie },
-  //   }: any = useApp();
+  const categoryRenderHome = [
+    {
+      name: "Hành động",
+      ref: useRef(null),
+      path: "hanh-dong",
+    },
+    {
+      name: "Anime",
+      ref: useRef(null),
+      path: "hoat-hinh",
+    },
+    {
+      name: "Kinh dị",
+      ref: useRef(null),
+      path: "kinh-di",
+    },
+    {
+      name: "Viễn tưởng",
+      ref: useRef(null),
+      path: "vien-tuong",
+    },
+  ]
+  const {
+    currentUser,
+    handle: { onToggleMovie },
+  }: AuthContextType = useApp()
   const renderSwipers = Array(4)
     .fill(0)
     .map((item: any, index: number) => {
@@ -42,7 +64,7 @@ const HomeApp = () => {
   }, [data?.category.length])
   const handleNext = useCallback(
     (index: number) => {
-      const findSwiper = renderSwipers.find((item) => item.key === index)
+      const findSwiper: any = categoryRenderHome.find((_item, indexRef) => indexRef === index)
       if (findSwiper?.ref.current) {
         const swiper = findSwiper.ref.current.swiper
         swiper.slidePrev()
@@ -52,7 +74,7 @@ const HomeApp = () => {
   )
   const handlePrev = useCallback(
     (index: number) => {
-      const findSwiper = renderSwipers.find((item) => item.key === index)
+      const findSwiper: any = categoryRenderHome.find((_item, indexRef) => indexRef === index)
       if (findSwiper?.ref.current) {
         const swiper = findSwiper.ref.current.swiper
         swiper.slideNext()
@@ -73,6 +95,8 @@ const HomeApp = () => {
       if (window) window.scrollTo({ top: 0, behavior: "smooth" })
     }
   }, [data?.category])
+  console.log(categoryRenderHome)
+
   if (!data) return <Loading />
   return (
     <>
@@ -80,10 +104,10 @@ const HomeApp = () => {
       <div className='bg-overlay'>
         <div className='container'>
           {data?.category.map((key: string, index: number) => {
-            const { ref }: any = renderSwipers.find((item) => item.key === index)
+            const { ref, name, path }: any = categoryRenderHome.find((_item, indexRef) => indexRef === index)
             return (
               <div key={index}>
-                <TitlePath title={renderTitle[index][index]} onClickNext={() => handleNext(index)} onClickPrev={() => handlePrev(index)} />
+                <TitlePath title={name} onClickNext={() => handleNext(index)} onClickPrev={() => handlePrev(index)} />
                 <Swiper
                   ref={ref}
                   autoplay={{
@@ -129,22 +153,16 @@ const HomeApp = () => {
                   modules={[Autoplay]}>
                   {data?.category[index]?.items.map((movie: any) => (
                     <SwiperSlide key={movie._id}>
-                      <CardProduct
-                        data={movie}
-                        device={device}
-                        // onToggleMovie={() => onToggleMovie(movie)}
-                        // findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item.id === movie.id)}
-                      />
+                      <CardProduct data={movie} device={device} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)} />
                     </SwiperSlide>
                   ))}
                 </Swiper>
                 <div className='mt-7 flex-center'>
                   <Button
                     className='border rounded-md border-primary py-2 px-5 flex items-center flex-row-reverse font-semibold hover:bg-primary duration-300 hover:text-black'
+                    href={`/the-loai/${path}`}
                     content={`Xem Tất Cả`}
                     icon={<MdNavigateNext className='h-5 w-6' />}
-                    onClick={() => null}
-                    // href={`the-loai/${data[key][0]?.cate_slug}`}
                   />
                 </div>
               </div>

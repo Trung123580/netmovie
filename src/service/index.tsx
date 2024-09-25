@@ -97,3 +97,22 @@ export const getMoviesRelate = createAsyncThunk("relate", async ({ status, count
     return []
   }
 })
+
+export const getSearchMovies = createAsyncThunk("search", async ({ keyWord, page }: { keyWord: string, page: number }) => {
+  try {
+    const response = await axios.get(`${BASE_API}/danh-sach`, {
+      params: {
+        limit: 24,
+        page: page,
+        search: keyWord
+      },
+    })
+    if (response.status === 200) {
+      return response.data
+    } else {
+      throw new Error("Data not found!")
+    }
+  } catch (error) {
+    return []
+  }
+})

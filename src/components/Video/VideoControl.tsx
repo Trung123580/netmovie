@@ -5,9 +5,7 @@ import Button from "../Button"
 const VideoControl = (props: any) => {
   const { isPlay, currentSeconds, maxDuration, onChangeCommitted, onChange, slots, onTogglePlayVideo, secondsLoaded, volume, onChangeVolume, changeCurrentTime, setChangeVolume } = props
   return (
-    <div
-      className='absolute bottom-0 w-full h-16 px-1 bg-blur/25'
-      onClick={(e) => e.stopPropagation()}>
+    <div className='absolute bottom-0 w-full h-16 px-1 bg-blur/25' onClick={(e) => e.stopPropagation()}>
       <div>
         <Slider
           aria-label='time-indicator'
@@ -65,12 +63,8 @@ const VideoControl = (props: any) => {
       </div>
       <div className='flex absolute bottom-0 w-full h-[calc(100%_-_24px)] justify-between px-3' onClick={(e) => e.stopPropagation()}>
         <div className='flex items-center justify-center group'>
-          <Button
-            icon={isPlay ? <IoPause size={25} /> : <IoPlay size={25} />}
-            onClick={onTogglePlayVideo}
-          />
-          <div
-            className='cursor-pointer ml-[5px] p-[5px] relative z-10 flex items-center justify-center'>
+          <Button icon={isPlay ? <IoPause size={25} /> : <IoPlay size={25} />} onClick={onTogglePlayVideo} />
+          <div className='cursor-pointer ml-[5px] p-[5px] relative z-10 flex items-center justify-center'>
             {volume >= 60 ? (
               <LuVolume2 size={20} onClick={() => setChangeVolume(0)} />
             ) : volume > 0 && volume < 60 ? (
