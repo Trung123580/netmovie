@@ -22,9 +22,10 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon/site.webmanifest",
   openGraph: {
-    title: "Acme",
-    description: "Acme is a...",
-    images: "images/logo.jpg",
+    title: "Net Movie",
+    description:
+      "Net Movie - Website xem phim online miễn phí với hàng ngàn bộ phim HD, Full HD chất lượng cao. Cập nhật phim mới liên tục, đa dạng thể loại từ hành động, lãng mạn, kinh dị đến khoa học viễn tưởng. Xem phim mọi lúc, mọi nơi trên điện thoại, máy tính bảng và PC, không quảng cáo làm phiền.",
+    images: "images/logo-netmovie.jpg",
   },
   alternates: {
     canonical: "/",
