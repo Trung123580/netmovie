@@ -89,7 +89,7 @@ const HomeApp = () => {
                 <Swiper
                   ref={ref}
                   autoplay={{
-                    delay: index === 0 ? 7000 : index === 1 ? 5000 : 9000,
+                    delay: index === 0 ? 5000 : index === 1 ? 8000 : 13000,
                     disableOnInteraction: false,
                     pauseOnMouseEnter: true,
                   }}

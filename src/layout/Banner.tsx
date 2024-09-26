@@ -48,7 +48,7 @@ const Banner = ({ data, device }: { data: any; device: string }) => {
           navigation={true}
           noSwiping={true}
           slidesPerView={1}
-          modules={[Navigation]}>
+          modules={[Navigation, Autoplay]}>
           {convertData.map((movie: any) => {
             console.log(movie.isShow)
             console.log(device)
