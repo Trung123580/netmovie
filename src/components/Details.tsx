@@ -276,6 +276,8 @@ const Details = ({ slug }: { slug: string }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refPlayer.current, volume, isPlay])
+  console.log(isLoadingVideo)
+
   if (isLoading) {
     return (
       <div className='min-h-screen'>
@@ -370,12 +372,12 @@ const Details = ({ slug }: { slug: string }) => {
                     setStatePlayVideo((prev) => ({ ...prev, isPlay: false }))
                   }}
                 />
-                {isLoadingVideo && (
+                {statePlayVideo.isLoadingVideo && (
                   <span className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2'>
                     <AiOutlineLoading3Quarters className='animate-spin' size={35} />
                   </span>
                 )}
-                <div id='btnPlay'>
+                <div id={`btnPlay`}>
                   {isPlay ? (
                     <Button icon={<FaCirclePause size={50} />} className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' />
                   ) : (
