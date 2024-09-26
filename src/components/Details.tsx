@@ -96,7 +96,10 @@ const Details = ({ slug }: { slug: string }) => {
   }
   useEffect(() => {
     dispatch(getDetailMovie({ slug }) as any)
-    return () => dispatch(clearDataCategory(null) as any)
+    return () => {
+      dispatch(clearDataCategory(null) as any)
+      setDataVideo({ linkPlay: "", type: "" })
+    }
   }, [slug])
   useEffect(() => {
     if (refPlayer.current) {
@@ -333,6 +336,7 @@ const Details = ({ slug }: { slug: string }) => {
               </div>
             ) : type === "iframe" ? (
               <iframe
+                key={uuid()}
                 allowFullScreen
                 referrerPolicy='no-referrer'
                 scrolling='no'
