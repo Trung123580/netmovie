@@ -136,6 +136,7 @@ const Details = ({ slug }: { slug: string }) => {
           setDataVideo({ linkPlay: checkLink.linkPlay, type: "iframe" })
         }
         document.getElementById("wrapperVideo")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+        document.getElementById("wrapperVideo-iframe")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
       } else {
         const defaultLink = (convertSort[0]?.server_data.filter((item: any) => item.name !== "undefined")[0].link_embed as string) ?? ""
         const checkLink = convertLinkPlayer({ link: defaultLink })
@@ -166,6 +167,7 @@ const Details = ({ slug }: { slug: string }) => {
   const durationCurrent = formatDuration(Number(Math.floor(refPlayer.current?.getDuration())) - Number(currentSeconds))
   const durationVideo = durationCurrent === "0:00" ? formatDuration(defaultDuration) : durationCurrent
   const optionVideoControls = {
+    device: device,
     isPlay: isPlay,
     volume: volume,
     currentSeconds: currentSeconds,
@@ -202,7 +204,7 @@ const Details = ({ slug }: { slug: string }) => {
     },
   }
   useEffect(() => {
-    const wrapperVideo = document.querySelector("#wrapperVideo")
+    const wrapperVideo = document.querySelector("#wrapperVideo-iframe")
     const wrapperControl = document.querySelector("#wrapperControl")
     const btnPlay = document.querySelector("#btnPlay")
     if (isPlay) {
@@ -311,7 +313,7 @@ const Details = ({ slug }: { slug: string }) => {
     <>
       {dataVideo.type === "video" && <ReactPlayer url={linkPlay} className='hidden' onDuration={(e) => setDefaultDuration(Math.floor(e))} />}
       <DetailsBanner findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === detail.movie._id)} onToggleMovie={() => onToggleMovie(detail?.movie)} data={detail?.movie} popup={popup} onShowPopup={onShowPopup} />
-      <div className='bg-overlay md:py-14'>
+      <div className='bg-overlay md:py-14 pt-2'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
           {episodesList.map(({ server_data, server_name }: ServerData, index: number) => {
             return (
@@ -331,7 +333,7 @@ const Details = ({ slug }: { slug: string }) => {
               </div>
             )
           })}
-          <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie} id='wrapperVideo'>
+          <div className={`${isTheaterMode ? "px-5" : "max-w-5xl"} mx-auto mt-16 overflow-hidden`} ref={refMovie} id='wrapperVideo-iframe'>
             {isLoadingVideo ? (
               <div className='animate-pulse bg-white/5  w-full aspect-video overflow-hidden bg-stone-900 rounded-md relative'>
                 <Loading hFull={true} />
@@ -348,7 +350,7 @@ const Details = ({ slug }: { slug: string }) => {
                 allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
               />
             ) : (
-              <section className='relative' onClick={handleTogglePlayVideo} onDoubleClick={() => optionVideoControls.onChangeFullScreen()}>
+              <section id='wrapperVideo' className='relative' onClick={handleTogglePlayVideo} onDoubleClick={() => optionVideoControls.onChangeFullScreen()}>
                 <ReactPlayer
                   ref={refPlayer}
                   controls={false}

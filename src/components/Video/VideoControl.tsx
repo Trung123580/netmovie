@@ -61,7 +61,7 @@ const VideoControl = (props: any) => {
           }}
         />
       </div>
-      <div className='flex absolute bottom-0 w-full h-[calc(100%_-_24px)] justify-between px-3' onClick={(e) => e.stopPropagation()}>
+      <div className='flex absolute bottom-0 w-full h-[calc(100%_-_24px)] justify-between px-3 md:scale-100 scale-[.78] md:left-0 -left-10' onClick={(e) => e.stopPropagation()}>
         <div className='flex items-center justify-center group'>
           <Button icon={isPlay ? <IoPause size={25} /> : <IoPlay size={25} />} onClick={onTogglePlayVideo} />
           <div className='cursor-pointer ml-[5px] p-[5px] relative z-10 flex items-center justify-center'>
