@@ -11,6 +11,7 @@ import { RootState } from "@/store/store"
 import Loading from "@/components/Loading"
 import useResize from "./hook/useResize"
 import { useApp } from "@/context/ContextProvider"
+import { PaginationItem } from "@mui/material"
 enum numberPage {
   zero,
   one,
@@ -98,7 +99,18 @@ function Regions({ slug, dataDefault, page, yearDate }: { yearDate: string; page
         ))}
       </div>
       <div className='my-10 flex justify-end'>
-        <Pagination count={totalPages} page={page} onChange={handleChange} shape='rounded' color='primary' variant='outlined' />
+      <Pagination
+          renderItem={(item) => {
+            return <PaginationItem className='!text-lg !text-white' {...item} />
+          }}
+          count={totalPages}
+          page={Number(page)}
+          onChange={handleChange}
+          shape='rounded'
+          color='primary'
+          variant='outlined'
+          className='wrapper_Pagination'
+        />
       </div>
     </div>
   )
