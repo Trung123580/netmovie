@@ -92,6 +92,7 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
             content='Xem Phim'
             onClick={() => {
               document.getElementById("wrapperVideo")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
+              document.getElementById("wrapperVideo-iframe")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })
             }}
             disabled={false}
             className='border hover:bg-primary/20 bg-white/5 py-2 border-primary flex justify-around items-center w-full lg:w-max rounded-lg mt-4 gap-1.5 md:gap-5 md:px-7'
