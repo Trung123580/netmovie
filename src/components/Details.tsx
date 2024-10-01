@@ -308,7 +308,6 @@ const Details = ({ slug }: { slug: string }) => {
         </div>
       </div>
     )
-
   return (
     <>
       {dataVideo.type === "video" && <ReactPlayer url={linkPlay} className='hidden' onDuration={(e) => setDefaultDuration(Math.floor(e))} />}
@@ -316,16 +315,25 @@ const Details = ({ slug }: { slug: string }) => {
       <div className='bg-overlay md:py-14 pt-2'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
           {episodesList.map(({ server_data, server_name }: ServerData, index: number) => {
+            const isServer = (index + 1) === searchServerName
             return (
               <div key={server_name}>
                 <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>SERVER {index + 1}</h3>
                 <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
                   {server_data?.map(({ name, slug }) => {
                     const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
+                    const isActive = () => {
+                      if (isServer) {
+                        if (searchPractice === slug){
+                          return true
+                        }
+                      }
+                      return false
+                    }
                     if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
                     return (
                       <SwiperSlide key={uuid()}>
-                        <Button onClick={() => handleChangeEpisode(index + 1, slug)} className='border inline-block w-full h-full border-primary rounded-md py-1' key={uuid()} content={convertEpisodes} />
+                        <Button onClick={() => handleChangeEpisode(index + 1, slug)} className={`${isActive() ? 'bg-primary/70 text-white border-primary hover:bg-primary/80': ''} border inline-block w-full h-full border-primary rounded-md py-1`} key={uuid()} content={convertEpisodes} />
                       </SwiperSlide>
                     )
                   })}
