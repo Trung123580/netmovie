@@ -320,14 +320,17 @@ const Details = ({ slug }: { slug: string }) => {
               <div key={server_name}>
                 <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>SERVER {index + 1}</h3>
                 <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
-                  {server_data?.map(({ name, slug }) => {
+                  {server_data?.map(({ name, slug }, indexEpisode) => {
                     const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
+                    console.log('convertEpisodes' ,);
                     const isActive = () => {
+                      if (server_data.length === 1 && index === 0) return true
                       if (isServer) {
                         if (searchPractice === slug){
                           return true
                         }
                       }
+                      if (server_data.length > 1 && indexEpisode === 0) return true
                       return false
                     }
                     if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
