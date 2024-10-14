@@ -11,7 +11,7 @@ const DetailsBanner = ({ data, onShowPopup, popup, onToggleMovie, findIsLoveMovi
       <div className='h-full w-full absolute top-0 left-0 bg-black/50'></div>
       <div className='md:pt-0 pt-5 container h-full relative z-20  px-4 flex md:flex-row flex-col gap-8 justify-center items-center w-full '>
         <div className='max-w-[300px] min-w-[300px]'>
-          <Image src={data?.thumb_url ?? ""} alt='banner' width={1000} height={1000} className='w-full h-full aspect-[2/3] rounded-lg' />
+          <img loading='lazy' src={data?.thumb_url ?? ""} alt='banner' width={1000} height={1000} className='w-full h-full aspect-[2/3] rounded-lg' />
         </div>
         <div className='flex-1'>
           <h2 className='text-4xl font-extrabold lg:text-5xl  text-wrap line-clamp-3'>{data?.name}</h2>

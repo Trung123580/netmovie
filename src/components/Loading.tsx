@@ -1,13 +1,13 @@
-import Image from 'next/image';
+import Image from "next/image"
 
 const Loading = ({ hFull }: { hFull?: boolean }) => {
   return (
-    <div className={`${hFull ? 'h-full' : 'h-screen '} flex items-center  justify-center bg-blur`}>
+    <div className={`${hFull ? "h-full" : "h-screen "} flex items-center  justify-center bg-blur`}>
       <div className='w-[40%] min-w-[260px] h-full'>
-        <Image src='/images/logo.jpg' className='mx-auto  w-full h-full object-contain aspect-[308/141]' height={1000} width={1000} alt='logo' />
+        <img loading='lazy' src='/images/logo.jpg' className='mx-auto  w-full h-full object-contain aspect-[308/141]' height={1000} width={1000} alt='logo' />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Loading;
+export default Loading

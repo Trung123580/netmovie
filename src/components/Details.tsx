@@ -315,18 +315,18 @@ const Details = ({ slug }: { slug: string }) => {
       <div className='bg-overlay md:py-14 pt-2'>
         <div className={`${isTheaterMode ? "" : "container"}`}>
           {episodesList.map(({ server_data, server_name }: ServerData, index: number) => {
-            const isServer = (index + 1) === searchServerName
+            const isServer = index + 1 === searchServerName
             return (
               <div key={server_name}>
                 <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>SERVER {index + 1}</h3>
                 <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
                   {server_data?.map(({ name, slug }, indexEpisode) => {
                     const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
-                    console.log('convertEpisodes' ,);
+                    console.log("convertEpisodes")
                     const isActive = () => {
                       if (server_data.length === 1 && index === 0) return true
                       if (isServer) {
-                        if (searchPractice === slug){
+                        if (searchPractice === slug) {
                           return true
                         }
                       }
@@ -336,7 +336,12 @@ const Details = ({ slug }: { slug: string }) => {
                     if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
                     return (
                       <SwiperSlide key={uuid()}>
-                        <Button onClick={() => handleChangeEpisode(index + 1, slug)} className={`${isActive() ? 'bg-primary/70 text-white border-primary hover:bg-primary/80': ''} border inline-block w-full h-full border-primary rounded-md py-1`} key={uuid()} content={convertEpisodes} />
+                        <Button
+                          onClick={() => handleChangeEpisode(index + 1, slug)}
+                          className={`${isActive() ? "bg-primary/70 text-white border-primary hover:bg-primary/80" : ""} border inline-block w-full h-full border-primary rounded-md py-1`}
+                          key={uuid()}
+                          content={convertEpisodes}
+                        />
                       </SwiperSlide>
                     )
                   })}
@@ -369,7 +374,7 @@ const Details = ({ slug }: { slug: string }) => {
                   url={linkPlay}
                   volume={volume / 100}
                   playing={isPlay}
-                  light={defaultIsPlay ? <Image alt='' className='rounded-md object-contain' layout='fill' src={defaultPosterVideo} /> : ""}
+                  light={defaultIsPlay ? <img alt='' className='rounded-md object-contain' src={defaultPosterVideo} /> : ""}
                   width={"100%"}
                   height={"100%"}
                   className='bg-white/5 overflow-hidden bg-stone-900 rounded-md aspect-video'

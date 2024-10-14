@@ -57,22 +57,22 @@ const Banner = ({ data, device }: { data: any; device: string }) => {
               <SwiperSlide key={uuid()}>
                 <div className='relative'>
                   {!isLoading ? (
-                    <Image
+                    <img
+                      loading='lazy'
                       src={"/images/logo.jpg"}
                       onLoad={() => {
                         if (!isLoading) setIsLoading(true)
                       }}
                       className='w-full h-full object-contain md:h-[70vh] lg:h-screen'
                       alt=''
-                      priority
                       width={1000}
                       height={1000}
                       sizes='100vw'
                     />
                   ) : movie.isShow && device === "pc" ? (
-                    <Image src={"/images/logo.jpg"} className='w-full object-contain h-[45vh] md:h-[70vh] lg:h-screen rotate-45' alt='' priority width={1000} height={1000} sizes='100vw' />
+                    <img loading='lazy' src={"/images/logo.jpg"} className='w-full object-contain h-[45vh] md:h-[70vh] lg:h-screen rotate-45' alt='' width={1000} height={1000} sizes='100vw' />
                   ) : (
-                    <Image src={movie?.poster_url} className={`w-full object-cover h-[45vh] md:h-[70vh] lg:h-screen`} alt='' priority width={1000} height={1000} sizes='100vw' />
+                    <img loading='lazy' src={movie?.poster_url} className={`w-full object-cover h-[45vh] md:h-[70vh] lg:h-screen`} alt='' width={1000} height={1000} sizes='100vw' />
                   )}
                   <div className='h-full w-full absolute top-0 left-0 bg-black/35'></div>
                   <div className='absolute position-center !top-[80%] !left-[54%]  sm:!left-[52%] md:!left-[54%] md:position-center z-30 w-full flex container  sm:!top-[80%] md:!top-[70%] h-[350px] lg:h-[480px] '>
@@ -103,7 +103,7 @@ const Banner = ({ data, device }: { data: any; device: string }) => {
                       </Link>
                     </div>
                     <div className='z-20 w-32 h-full right-[5%] sm:relative md:-top-14 border-8 xl:-top-24 rounded-lg md:w-60 lg:w-72 xl:w-80 xl:h-[31rem] lg:h-[27rem] border-primary hidden md:block'>
-                      <Image src={movie?.thumb_url} width={1000} height={1000} priority className='w-full h-full object-cover !aspect-[420/350]' alt='' />
+                      <img loading='lazy' src={movie?.thumb_url} width={1000} height={1000} className='w-full h-full object-cover !aspect-[420/350]' alt='' />
                     </div>
                   </div>
                 </div>

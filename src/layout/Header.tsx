@@ -6,7 +6,7 @@ import Nav from "@/components/Nav"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { removeVietnameseTones } from "@/utils/helpers"
-import { useApp } from '@/context/ContextProvider';
+import { useApp } from "@/context/ContextProvider"
 const Header = () => {
   const [isShowNavBar, setIsShowNavBav] = useState<boolean>(false)
   const [openMenuCategory, setOpenMenuCategory] = useState<string>("")
@@ -17,7 +17,7 @@ const Header = () => {
     isAuthenticated,
     // headerData: { category, regions, typeMovie, topMovies },
     handle: { onShowPopup, onLoginGG, onAppSignOut },
-  }: any = useApp();
+  }: any = useApp()
   const pathName = usePathname()
   const handleToggleNavbar = () => {
     setIsShowNavBav(!isShowNavBar)
@@ -72,7 +72,7 @@ const Header = () => {
       <div className='relative '>
         <div className={`flex justify-between items-center relative ${pathName === "/" || isCheckDetail ? "lg:absolute" : ""}  gap-x-2 py-3 z-50 w-full`}>
           <Link href='/' className='flex items-center gap-x-[10px] flex-basis '>
-            <Image src='/images/logo.jpg' className='w-40  md:w-52 h-full object-contain aspect-[208/41]' height={1000} width={1000} alt='logo' />
+            <img loading='lazy' src='/images/logo.jpg' className='w-40  md:w-52 h-full object-contain aspect-[208/41]' height={1000} width={1000} alt='logo' />
           </Link>
           <Nav
             onToggleNavbar={handleToggleNavbar}
