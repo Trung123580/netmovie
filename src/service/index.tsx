@@ -1,7 +1,7 @@
 import { categoryHome } from "@/utils/constants"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
-// import dayjs from 'dayjs';
+import dayjs from "dayjs"
 const BASE_API = process.env.NEXT_PUBLIC_BASE_API
 
 export const getDetailMovie = createAsyncThunk("detail", async ({ slug }: { slug: string }) => {
@@ -40,6 +40,7 @@ export const getCategoryItem = async ({ page, slug }: { page: number; slug: stri
         category: slug,
         page: page,
         limit: 24,
+        year: dayjs().year(),
       },
     })
     if (response.status === 200) {
@@ -66,7 +67,7 @@ export const getMoviesList = async ({ page, slug, type, year }: { year?: number;
         [type]: slug,
         page: page,
         limit: 24,
-        year: year === 0 ? 2024 : year,
+        year: year === 0 ? dayjs().year() : year,
       },
     })
     if (response.status === 200) {
@@ -98,13 +99,13 @@ export const getMoviesRelate = createAsyncThunk("relate", async ({ status, count
   }
 })
 
-export const getSearchMovies = createAsyncThunk("search", async ({ keyWord, page }: { keyWord: string, page: number }) => {
+export const getSearchMovies = createAsyncThunk("search", async ({ keyWord, page }: { keyWord: string; page: number }) => {
   try {
     const response = await axios.get(`${BASE_API}/danh-sach`, {
       params: {
         limit: 24,
         page: page,
-        search: keyWord
+        search: keyWord,
       },
     })
     if (response.status === 200) {
