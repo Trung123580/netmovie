@@ -278,7 +278,7 @@ const Details = ({ slug }: { slug: string }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refPlayer.current, volume, isPlay])
-  console.log(isLoadingVideo)
+  console.log(isLoadingVideo, searchServerName, searchPractice)
 
   if (isLoading) {
     return (
@@ -324,13 +324,7 @@ const Details = ({ slug }: { slug: string }) => {
                     const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
                     console.log("convertEpisodes")
                     const isActive = () => {
-                      if (server_data.length === 1 && index === 0) return true
-                      if (isServer) {
-                        if (searchPractice === slug) {
-                          return true
-                        }
-                      }
-                      if (server_data.length > 1 && indexEpisode === 0) return true
+                      if (isServer) return true
                       return false
                     }
                     if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
@@ -338,7 +332,7 @@ const Details = ({ slug }: { slug: string }) => {
                       <SwiperSlide key={uuid()}>
                         <Button
                           onClick={() => handleChangeEpisode(index + 1, slug)}
-                          className={`${isActive() ? "bg-primary/70 text-white border-primary hover:bg-primary/80" : ""} border inline-block w-full h-full border-primary rounded-md py-1`}
+                          className={`${isActive() && slug === searchPractice ? "bg-primary/70 text-white border-primary hover:bg-primary/80" : ""} border inline-block w-full h-full border-primary rounded-md py-1`}
                           key={uuid()}
                           content={convertEpisodes}
                         />
@@ -358,12 +352,11 @@ const Details = ({ slug }: { slug: string }) => {
               <iframe
                 key={uuid()}
                 allowFullScreen
-                referrerPolicy='no-referrer'
                 scrolling='no'
                 className='w-full bg-white/5 aspect-video overflow-hidden bg-stone-900 rounded-md'
                 src={linkPlay ?? ""}
                 frameBorder='0'
-                allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+                allow='accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
               />
             ) : (
               <section id='wrapperVideo' className='relative' onClick={handleTogglePlayVideo} onDoubleClick={() => optionVideoControls.onChangeFullScreen()}>
