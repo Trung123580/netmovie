@@ -319,7 +319,26 @@ const Details = ({ slug }: { slug: string }) => {
             return (
               <div key={server_name}>
                 <h3 className={`text-base font-bold ${isTheaterMode ? "container" : ""}`}>SERVER {index + 1}</h3>
-                <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
+                <div className="grid grid-cols-7 md:grid-cols-12 gap-2 max-h-[100px] h-[100px] md:max-h-[200px] md:h-[200px] overflow-auto overflow-x-hidden px-3 mt-5">
+                  {server_data?.map(({ name, slug }, indexEpisode) => {
+                    const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
+                    console.log("convertEpisodes")
+                    const isActive = () => {
+                      if (isServer) return true
+                      return false
+                    }
+                    if (name === "undefined") return <React.Fragment key={uuid()}></React.Fragment>
+                    return (
+                      <Button
+                        onClick={() => handleChangeEpisode(index + 1, slug)}
+                        className={`${isActive() && slug === searchPractice ? "bg-primary/70 text-white border-primary hover:bg-primary/80" : ""} ${(!searchPractice && !searchPractice && indexEpisode === 0 ? "bg-primary/70 text-white border-primary hover:bg-primary/80" :"")} border inline-block w-full h-full border-primary rounded-md py-1`}
+                        key={uuid()}
+                        content={convertEpisodes}
+                      />
+                    )
+                  })}
+                </div>
+                {/* <Swiper className='cursor-pointer wrapper-episodes my-4' breakpoints={{}} spaceBetween={20} loop={true} keyboard={true} rewind={true} noSwiping={true} slidesPerView={"auto"} modules={[]}>
                   {server_data?.map(({ name, slug }, indexEpisode) => {
                     const convertEpisodes = name.startsWith("0") ? name.substring(1, name.length) : name
                     console.log("convertEpisodes")
@@ -339,7 +358,7 @@ const Details = ({ slug }: { slug: string }) => {
                       </SwiperSlide>
                     )
                   })}
-                </Swiper>
+                </Swiper> */}
               </div>
             )
           })}
