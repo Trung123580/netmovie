@@ -1,18 +1,19 @@
-"use client"
-import { useCallback, useEffect } from "react"
-import CardProduct from "@/components/CardProduct"
-import TitlePath from "@/components/TitlePath"
-import { storeState } from "@/store/storeApi"
-import { RootState } from "@/store/store"
-import { Pagination } from "@/utils/moduleMaterial"
-import { useApp } from "@/context/ContextProvider"
-import { PaginationItem } from "@mui/material"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import Button from "@/components/Button"
-import { useDispatch, useSelector } from "react-redux"
-import { getSearchMovies } from "@/service"
-import useResize from "./hook/useResize"
-import Loading from "./Loading"
+'use client'
+import {useCallback, useEffect} from 'react'
+import CardProduct from '@/components/CardProduct'
+import TitlePath from '@/components/TitlePath'
+import {storeState} from '@/store/storeApi'
+import {RootState} from '@/store/store'
+import {Pagination} from '@/utils/moduleMaterial'
+import {useApp} from '@/context/ContextProvider'
+import {PaginationItem} from '@mui/material'
+import {usePathname, useRouter, useSearchParams} from 'next/navigation'
+import Button from '@/components/Button'
+import {useDispatch, useSelector} from 'react-redux'
+import {getSearchMovies} from '@/service'
+import useResize from './hook/useResize'
+import Loading from './Loading'
+
 enum numberPage {
   zero,
   one,
