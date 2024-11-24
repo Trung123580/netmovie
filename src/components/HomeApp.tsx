@@ -5,18 +5,18 @@ import { useEffect, useCallback, useMemo, useRef, useState } from "react"
 import { getAllHomeCategory, getBanner } from "@/service"
 import { RootState } from "@/store/store"
 import { useDispatch, useSelector } from "react-redux"
-import Button from "@/components/Button"
-import { MdNavigateNext } from "@/utils/icons"
-import TitlePath from "@/components/TitlePath"
-import CardProduct from "@/components/CardProduct"
 import Loading from "./Loading"
-import useResize from "./hook/useResize"
 import { storeState } from "@/store/storeApi"
 import { useApp } from "@/context/ContextProvider"
+import TitlePath from "./TitlePath"
+import CardProduct from "./CardProduct"
+import Button from "./Button"
+import { MdNavigateNext } from "react-icons/md"
+import useResize from "./hook/useResize"
 const HomeApp = () => {
   const dispatch = useDispatch()
   const { data }: storeState = useSelector((state: RootState) => state.storeApp)
-  const { device } = useResize()
+  const {device} = useResize()
   const categoryRenderHome = [
     {
       name: "Hành động",
@@ -78,7 +78,7 @@ const HomeApp = () => {
   if (!data) return <Loading />
   return (
     <>
-      <Banner data={data?.banner?.items ?? []} device={device} />
+      <Banner data={data?.banner?.items ?? []} />
       <div className='bg-overlay'>
         <div className='container'>
           {data?.category.map((key: string, index: number) => {

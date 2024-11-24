@@ -19,17 +19,20 @@ enum numberPage {
   three,
   four,
 }
-function TypeMovie({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
+// function TypeMovie({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
+function TypeMovie({ slug, dataDefault, page }: { page: number; slug: string; dataDefault: any }) {
   const { isLoading }: { isLoading: boolean } = useSelector((state: RootState) => state.storeApp)
   const [dataNewMovie, setDataNewMovie] = useState<any>([])
   const [totalPages, setTotalPages] = useState<number>(numberPage.one)
-  const [year, setYear] = useState(() => {
-    if (yearDate) {
-      return Number(yearDate)
-    } else {
-      return 0
-    }
-  })
+  // const [year, setYear] = useState(() => {
+  //   if (yearDate) {
+  //     return Number(yearDate)
+  //   } else {
+  //     return 0
+  //   }
+  // })
+  // console.log(dataDefault);
+  
   const { device } = useResize()
   const {
     currentUser,
@@ -46,47 +49,47 @@ function TypeMovie({ slug, dataDefault, page, yearDate }: { yearDate: string; pa
   }
   useEffect(() => {
     if (!dataDefault) return
-      ; (async () => {
+      (() => {
         dispatch(setIsLoading(false))
         setDataNewMovie(dataDefault?.items)
-        setTotalPages(Number(dataDefault?.pagination.totalPages))
+        setTotalPages(Number(dataDefault?.params?.pagination?.totalPages))
         handleScrollToTop()
       })()
-  }, [searchPage, slug, dataDefault?.items.length, page])
+  }, [searchPage, slug, dataDefault?.items?.length, page])
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    if (year) {
-      router.push(`${pathName}?page=${value}&year=${year}`)
-      dispatch(setIsLoading(true))
-      return
-    }
+    // if (year) {
+    //   router.push(`${pathName}?page=${value}&year=${year}`)
+    //   dispatch(setIsLoading(true))
+    //   return
+    // }
     router.push(`${pathName}?page=${value}`)
     dispatch(setIsLoading(true))
   }
-  const handleChangeYear = (event: { target: { value: number } }) => {
-    if (event.target.value == 0) {
-      router.push(`${pathName}`)
-      dispatch(setIsLoading(true))
-      return
-    }
-    setYear(event.target.value)
-    router.push(`${pathName}?year=${event.target.value}`)
-    dispatch(setIsLoading(true))
-  }
+  // const handleChangeYear = (event: { target: { value: number } }) => {
+  //   if (event.target.value == 0) {
+  //     router.push(`${pathName}`)
+  //     dispatch(setIsLoading(true))
+  //     return
+  //   }
+  //   setYear(event.target.value)
+  //   router.push(`${pathName}?year=${event.target.value}`)
+  //   dispatch(setIsLoading(true))
+  // }
   useEffect(() => {
     if (dataDefault?.items) {
       setDataNewMovie(dataDefault?.items)
       dispatch(setIsLoading(false))
-      setTotalPages(Number(dataDefault?.pagination.totalPages))
+      setTotalPages(Number(dataDefault?.params?.pagination?.totalPages))
       handleScrollToTop()
     }
-  }, [dataDefault?.pagination?.totalItems])
+  }, [dataDefault?.params?.pagination?.totalItems])
   if (isLoading) {
     return <Loading />
   }
-  if (!dataNewMovie.length) return null
+  if (!dataNewMovie?.length) return null
   return (
     <div className='container'>
-      <TitlePath year={year} sort={true} onChange={handleChangeYear} title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
+      <TitlePath title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  md:gap-x-5 gap-x-[15px] gap-y-6 md:gap-y-10 '>
         {dataNewMovie.map((movie: any) => (
           <CardProduct

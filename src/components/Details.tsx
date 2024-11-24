@@ -87,9 +87,10 @@ const Details = ({ slug }: { slug: string }) => {
   const { device } = useResize()
   const defaultPosterVideo = useMemo(() => {
     if (!detail) return ""
-    return detail.movie.poster_url
+    return detail.movie.thumb_url
   }, [detail])
-
+  console.log(relate);
+  
   const getSVNumber = (serverName: string) => {
     const match = serverName.match(/SV\s?#(\d+)/) // Lấy số từ "SV #1", "SV #2", ...
     return match ? parseInt(match[1], 10) : Infinity // Nếu không tìm thấy, trả về Infinity (để xếp cuối)
@@ -467,9 +468,8 @@ const Details = ({ slug }: { slug: string }) => {
             pauseOnMouseEnter: true,
           }}
           modules={[Autoplay]}>
-          {relate?.items.map((movie: any) => (
+          {relate?.items?.map((movie: any) => (
             <SwiperSlide key={movie?._id}>
-              {/* // onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} */}
               <CardProduct device={device} data={movie} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)} />
             </SwiperSlide>
           ))}

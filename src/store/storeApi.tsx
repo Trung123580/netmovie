@@ -11,11 +11,13 @@ export interface storeState {
     search: {
       status: boolean,
       items: any[] | [],
-      pagination: {
-        currentPage: number,
-        totalItems: number,
-        totalItemsPerPage: string,
-        totalPages: number,
+      params: {
+        pagination: {
+          currentPage: number,
+          totalItems: number,
+          totalItemsPerPage: string,
+          totalPages: number,
+        }
       }
     }
   }
@@ -33,11 +35,13 @@ const initialState: storeState = {
     relate: null,
     search: {
       items: [],
-      pagination: {
-        currentPage: 0,
-        totalItems: 0,
-        totalItemsPerPage: '',
-        totalPages: 0,
+      params: {
+        pagination: {
+          currentPage: 0,
+          totalItems: 0,
+          totalItemsPerPage: '',
+          totalPages: 0,
+        },
       },
       status: false,
     }

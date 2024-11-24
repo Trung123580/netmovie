@@ -9,7 +9,7 @@ const CardProduct = ({ data, onToggleMovie, findIsLoveMovie, device }: { device:
     return (
       <Link href={`/details/${data.slug}`} className='group'>
         <div className='rounded-lg overflow-hidden relative'>
-          <img loading='lazy' width={1000} height={1000} className='h-full w-full object-cover aspect-[2/3]' src={data?.thumb_url} alt='' />
+          <img loading='lazy' width={1000} height={1000} className='h-full w-full object-cover aspect-[2/3]' src={data?.poster_url.includes(process.env.NEXT_PUBLIC_CDN_IMAGE) ? data?.poster_url: process.env.NEXT_PUBLIC_CDN_IMAGE + data?.poster_url} alt='' />
           {/* <div className='bg-primary font-semibold rounded absolute top-2.5 left-2.5 text-xs text-black px-2.5 py-0.5'>{data?.episode_current}</div> */}
           {findIsLoveMovie && (
             <div className='absolute top-2.5 right-2.5'>
@@ -52,7 +52,7 @@ const CardProduct = ({ data, onToggleMovie, findIsLoveMovie, device }: { device:
     return (
       <div className='group'>
         <div className='rounded-lg overflow-hidden relative'>
-          <img loading='lazy' width={1000} height={1000} className='h-full w-full object-cover aspect-[2/3]' src={data?.thumb_url} alt='' />
+          <img loading='lazy' width={1000} height={1000} className='h-full w-full object-cover aspect-[2/3]' src={data?.poster_url.includes(process.env.NEXT_PUBLIC_CDN_IMAGE) ? data?.poster_url: process.env.NEXT_PUBLIC_CDN_IMAGE + data?.poster_url} alt='' />
           {/* <div className='bg-primary font-semibold rounded absolute top-2.5 left-2.5 text-xs text-black px-2.5 py-0.5'>{data?.episode_current}</div> */}
           {findIsLoveMovie && (
             <div className='absolute top-2.5 right-2.5'>

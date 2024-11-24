@@ -1,4 +1,4 @@
-import { categoryHome } from "@/utils/constants"
+import { category, categoryHome, country, typeMovies, years } from "@/utils/constants"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
 import dayjs from "dayjs"
@@ -35,16 +35,15 @@ export const getBanner = createAsyncThunk("banner", async (page: number) => {
 })
 export const getCategoryItem = async ({ page, slug }: { page: number; slug: string }) => {
   try {
-    const response = await axios.get(`${BASE_API}/danh-sach`, {
+    const response = await axios.get(`${BASE_API}/v1/api/${slug === "hoat-hinh" ? "danh-sach" : "the-loai"}/${slug}`, {
       params: {
-        category: slug,
         page: page,
         limit: 24,
         year: dayjs().year(),
       },
     })
     if (response.status === 200) {
-      return response.data
+      return response.data.data
     } else {
       throw new Error("Data not found!")
     }
@@ -60,18 +59,26 @@ export const getAllHomeCategory = createAsyncThunk("category", async () => {
     return []
   }
 })
-export const getMoviesList = async ({ page, slug, type, year }: { year?: number; type: string; page: number; slug: string }) => {
+export const getMoviesList = async ({ page, slug }: { page: number; slug: string }) => {
+  // const pathMovie = typeMovies.includes(slug) ? "danh-sach" : "the-loai"
+  const findPathApi = (): string => {
+    if (typeMovies.includes(slug)) return "danh-sach"
+    if (category.some(cate => cate.path.includes(slug))) return "the-loai"
+    if (country.some((nation =>nation.path.includes(slug)))) return "quoc-gia"
+    if (years.some((year => String(year.path).includes(slug)))) return "nam"
+    return ''
+  }
   try {
-    const response = await axios.get(`${BASE_API}/danh-sach`, {
+    const response = await axios.get(`${BASE_API}/v1/api/${findPathApi()}/${slug}`, {
       params: {
-        [type]: slug,
+        // [type]: slug,
         page: page,
         limit: 24,
-        year: year === 0 ? dayjs().year() : year,
+        // year: year === 0 ? dayjs().year() : year,
       },
     })
     if (response.status === 200) {
-      return response.data
+      return response.data.data
     } else {
       throw new Error("Data not found!")
     }
@@ -82,15 +89,15 @@ export const getMoviesList = async ({ page, slug, type, year }: { year?: number;
 
 export const getMoviesRelate = createAsyncThunk("relate", async ({ status, country }: { status: string; country: string }) => {
   try {
-    const response = await axios.get(`${BASE_API}/danh-sach`, {
+    const response = await axios.get(`${BASE_API}/v1/api/quoc-gia/${country}`, {
       params: {
         limit: 24,
         status,
-        country,
+        // country,
       },
     })
     if (response.status === 200) {
-      return response.data
+      return response.data.data
     } else {
       throw new Error("Data not found!")
     }
@@ -101,15 +108,15 @@ export const getMoviesRelate = createAsyncThunk("relate", async ({ status, count
 
 export const getSearchMovies = createAsyncThunk("search", async ({ keyWord, page }: { keyWord: string; page: number }) => {
   try {
-    const response = await axios.get(`${BASE_API}/danh-sach`, {
+    const response = await axios.get(`${BASE_API}/v1/api/tim-kiem`, {
       params: {
         limit: 24,
         page: page,
-        search: keyWord,
+        keyword: keyWord,
       },
     })
     if (response.status === 200) {
-      return response.data
+      return response.data.data
     } else {
       throw new Error("Data not found!")
     }

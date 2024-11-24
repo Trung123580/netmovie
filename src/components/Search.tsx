@@ -38,8 +38,12 @@ const Search = ({ query, page }: { query: string; page: number }) => {
     isLoading,
     data: { search },
   }: storeState = useSelector((state: RootState) => state.storeApp)
-  const { items, pagination } = search
-  const { totalPages, currentPage, totalItems, totalItemsPerPage } = pagination
+  const { items, params } = search
+  const { pagination } = params
+  console.log(search);
+  console.log(pagination);
+  console.log(items);
+  const { totalPages } = pagination
   const dispatch = useDispatch()
 
   useEffect(() => {

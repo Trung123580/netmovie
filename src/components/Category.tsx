@@ -13,6 +13,7 @@ import Loading from "@/components/Loading"
 import useResize from "./hook/useResize"
 import { useApp } from "@/context/ContextProvider"
 import { PaginationItem } from "@mui/material"
+import Button from "./Button"
 enum numberPage {
   zero,
   one,
@@ -20,17 +21,19 @@ enum numberPage {
   three,
   four,
 }
-function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; page: number; slug: string; dataDefault: any }) {
+function Category({ slug, dataDefault, page}: { page: number; slug: string; dataDefault: any }) {
   const { isLoading }: storeState = useSelector((state: RootState) => state.storeApp)
   const [dataNewMovie, setDataNewMovie] = useState<any>([])
   const [totalPages, setTotalPages] = useState<number>(numberPage.one)
-  const [year, setYear] = useState(() => {
-    if (yearDate) {
-      return Number(yearDate)
-    } else {
-      return 0
-    }
-  })
+  // const [year, setYear] = useState(() => {
+  //   if (yearDate) {
+  //     return Number(yearDate)
+  //   } else {
+  //     return 0
+  //   }
+  // })
+  console.log(dataDefault)
+  
   const {
     currentUser,
     handle: { onToggleMovie },
@@ -47,47 +50,60 @@ function Category({ slug, dataDefault, page, yearDate }: { yearDate: string; pag
   }
   useEffect(() => {
     if (!dataDefault) return
-    ;(async () => {
+    ( () => {
       dispatch(setIsLoading(false))
       setDataNewMovie(dataDefault?.items)
-      setTotalPages(Number(dataDefault?.pagination.totalPages))
+      setTotalPages(Number(dataDefault?.params?.pagination.totalPages))
       handleScrollToTop()
     })()
-  }, [searchPage, slug, dataDefault?.items.length, page])
+  }, [searchPage, slug, dataDefault?.items?.length, page])
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    if (year) {
-      router.push(`${pathName}?page=${value}&year=${year}`)
-      dispatch(setIsLoading(true))
-      return
-    }
+    // if (year) {
+    //   router.push(`${pathName}?page=${value}&year=${year}`)
+    //   dispatch(setIsLoading(true))
+    //   return
+    // }
     router.push(`${pathName}?page=${value}`)
     dispatch(setIsLoading(true))
   }
-  const handleChangeYear = (event: { target: { value: number } }) => {
-    if (event.target.value == 0) {
-      router.push(`${pathName}`)
-      dispatch(setIsLoading(true))
-      return
-    }
-    setYear(event.target.value)
-    router.push(`${pathName}?year=${event.target.value}`)
-    dispatch(setIsLoading(true))
-  }
+  // const handleChangeYear = (event: { target: { value: number } }) => {
+  //   if (event.target.value == 0) {
+  //     router.push(`${pathName}`)
+  //     dispatch(setIsLoading(true))
+  //     return
+  //   }
+  //   setYear(event.target.value)
+  //   router.push(`${pathName}?year=${event.target.value}`)
+  //   dispatch(setIsLoading(true))
+  // }
   useEffect(() => {
     if (dataDefault?.items) {
       setDataNewMovie(dataDefault?.items)
       dispatch(setIsLoading(false))
-      setTotalPages(Number(dataDefault?.pagination.totalPages))
+      setTotalPages(Number(dataDefault?.params?.pagination.totalPages))
       handleScrollToTop()
     }
-  }, [dataDefault?.pagination?.totalItems])
+  }, [dataDefault?.params?.pagination?.totalItems])
   if (isLoading) {
     return <Loading />
   }
-  if (!dataNewMovie.length) return null
+  if (!dataNewMovie?.length) {
+    return (
+      <div className='container '>
+        <div className='h-[70vh] flex items-center justify-center flex-col'>
+          <h1 className='text-base md:text-2xl font-semibold text-primary capitalize'>( Hiện tại chưa có phim nào cho thể loại này / chưa cập nhập )</h1>
+          <Button
+            className='translate-y-3 text-center group-hover:-translate-y-0 hover:bg-primary hover:text-black hover:border-white duration-300 bg-blur py-2.5 px-6 rounded-full text-sm text-black font-semibold leading-none border-2 border-primary text-white w-36'
+            content={"Quay lại"}
+            onClick={() => router.back()}
+          />
+        </div>
+      </div>
+      )
+  }
   return (
     <div className='container'>
-      <TitlePath year={year} sort={true} onChange={handleChangeYear} title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
+      <TitlePath title={categoryName ?? ""} noSlide={true} onClickNext={() => null} onClickPrev={() => null} />
       <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  md:gap-x-5 gap-x-[15px] gap-y-6 md:gap-y-10'>
         {dataNewMovie.map((movie: any) => (
           <CardProduct key={movie._id} data={movie} device={device} onToggleMovie={() => onToggleMovie(movie)} findIsLoveMovie={currentUser?.loveMovie.some((item: any) => item._id === movie._id)} />

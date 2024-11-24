@@ -11,6 +11,8 @@ const FaVouRite = () => {
     handle: { onToggleMovie },
   }: any = useApp()
   const { device } = useResize()
+  console.log(currentUser?.loveMovie);
+  
   if (!currentUser?.loveMovie.length) {
     return (
       <div className='container'>

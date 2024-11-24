@@ -25,13 +25,11 @@ function TitlePath({onClickNext, onClickPrev, title, noSlide, className, sort, y
             <MenuItem value={0}>
               <em>{years.findLast((item) => item)?.name}</em>
             </MenuItem>
-            {years
-              .map((year) => (
-                <MenuItem key={year.id} value={year.path}>
-                  {year.name}
-                </MenuItem>
-              ))
-              .reverse()}
+            {years.reverse().map((year) => (
+              <MenuItem key={year.id} value={year.path}>
+                {year.name}
+              </MenuItem>
+            )).reverse()}
           </Select>
         </FormControl>
       )}
