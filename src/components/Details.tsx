@@ -253,20 +253,20 @@ const Details = ({ slug }: { slug: string }) => {
       if (e.code === "ArrowRight" && e.target.tagName !== "INPUT") {
         e.preventDefault()
         const currentTime = refPlayer.current.getCurrentTime()
-        await refPlayer.current.seekTo(currentTime + 15, "seconds")
+        await refPlayer.current.seekTo(currentTime + 5, "seconds")
       }
       if (e.code === "ArrowLeft" && e.target.tagName !== "INPUT") {
         e.preventDefault()
         const currentTime = refPlayer.current.getCurrentTime()
-        await refPlayer.current.seekTo(Math.max(currentTime - 15, 0), "seconds") // nếu nhỏ hơn 0 trả về 0
+        await refPlayer.current.seekTo(Math.max(currentTime - 5, 0), "seconds") // nếu nhỏ hơn 0 trả về 0
       }
       if (e.code === "ArrowUp" && e.target.tagName !== "INPUT") {
         e.preventDefault()
-        setVolume((prevVolume) => Math.min(prevVolume + 15, 100)) // nếu lớn hơn 100 trả về 100
+        setVolume((prevVolume) => Math.min(prevVolume + 5, 100)) // nếu lớn hơn 100 trả về 100
       }
       if (e.code === "ArrowDown" && e.target.tagName !== "INPUT") {
         e.preventDefault()
-        setVolume((prevVolume) => Math.max(prevVolume - 15, 0)) // nếu nhỏ hơn 0 trả về 0
+        setVolume((prevVolume) => Math.max(prevVolume - 5, 0)) // nếu nhỏ hơn 0 trả về 0
       }
       if (e.code === "KeyF" && e.target.tagName !== "INPUT") {
         e.preventDefault()
